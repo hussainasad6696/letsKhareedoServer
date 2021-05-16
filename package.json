@@ -1,0 +1,21 @@
+{
+  "name": "letskhareedoserver",
+  "version": "1.0.0",
+  "description": "lets khareedo server side",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon index.js"
+  },
+  "author": "hussian",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "fs": "*",
+    "https": "^1.0.0",
+    "mongodb": "^3.6.6",
+    "mongoose": "^5.12.8",
+    "node-module": "^2.0.0"
+  }
+}
