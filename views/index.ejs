@@ -30,7 +30,7 @@
     <link rel="canonical" href="index.html">
     <meta property="og:url" content="index.html">
   </head>
-  <body data-home-page="index.html"> data-home-page-title="Home" class="u-body"><header class="u-clearfix u-header u-header" id="sec-a74b"><div class="u-clearfix u-sheet u-sheet-1">
+  <body data-home-page="index.html" data-home-page-title="Home" class="u-body"><header class="u-clearfix u-header u-header" id="sec-a74b"><div class="u-clearfix u-sheet u-sheet-1">
         <a href="https://nicepage.com" class="u-image u-logo u-image-1">
           <img src="images/default-logo.png" class="u-logo-image u-logo-image-1">
         </a>
@@ -57,6 +57,7 @@
                 <div class="u-menu-close"></div>
                 <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2"><li class="u-nav-item"><a class="u-button-style u-nav-link" href="index.html" style="padding: 10px 20px;">Home</a>
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="Stock-Detail.html" style="padding: 10px 20px;">Stock Detail</a>
+</li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="Sales-Sheet.html" style="padding: 10px 20px;">Sales Detail</a>
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="Artical-form.html" style="padding: 10px 20px;">Artical Form</a>
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link" style="padding: 10px 20px;">Stock Entry</a>
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link" style="padding: 10px 20px;">Logout</a>
@@ -66,7 +67,7 @@
             <div class="u-black u-menu-overlay u-opacity u-opacity-70"></div>
           </div>
         </nav>
-        <h1 class="u-text u-text-1">CRM</h1>
+        <h1 class="u-text u-text-1"><%= person %> CRM</h1>
       </div></header>
     <section class="u-align-center u-clearfix u-section-1" id="sec-643d">
       <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
@@ -82,29 +83,22 @@
                 <th class="u-border-1 u-border-black u-table-cell">Partners</th>
                 <th class="u-border-1 u-border-black u-table-cell">Investement</th>
                 <th class="u-border-1 u-border-black u-table-cell">Date</th>
+                <th class="u-border-1 u-border-black u-table-cell">Update Selections</th>
               </tr>
             </thead>
             <tbody class="u-table-body">
+              <% for (var i = 0; i < partner.length; i++) { %>
               <tr style="height: 75px;">
-                <td class="u-border-1 u-border-grey-30 u-table-cell">Adeel Iqbal</td>
-                <td class="u-border-1 u-border-grey-30 u-table-cell">Description</td>
-                <td class="u-border-1 u-border-grey-30 u-table-cell">Description</td>
+                <td id="partnerName_first" type="text" name="partnerName_first" class="u-border-1 u-border-grey-30 u-table-cell"><%= partner[i].partnerName_first %>
+                  <%= partner[i].partnerName_last %></td>
+                <td id="investment" name="investment" type="text" class="u-border-1 u-border-grey-30 u-table-cell"><%= partner[i].latestInvestment %></td>
+                <td id="date" name="date" type="text" class="u-border-1 u-border-grey-30 u-table-cell">Date: <%= partner[i].date %> Time: 
+                  <%= partner[i].investmentDate_timeInput%>
+                  <%= partner[i].investmentDate_ampm%></td>
+                <td class="u-border-1 u-border-grey-30 u-table-cell">
+                  <button type="button" onclick="sendUserInfo()" name="submit" id="updateData">Update</button></td>
               </tr>
-              <tr style="height: 73px;">
-                <td class="u-border-1 u-border-grey-30 u-table-cell">Mian Hussain Asad</td>
-                <td class="u-border-1 u-border-grey-30 u-table-cell">Description</td>
-                <td class="u-border-1 u-border-grey-30 u-table-cell">Description</td>
-              </tr>
-              <tr style="height: 76px;">
-                <td class="u-border-1 u-border-grey-30 u-table-cell">Yahya tauqeer</td>
-                <td class="u-border-1 u-border-grey-30 u-table-cell">Description</td>
-                <td class="u-border-1 u-border-grey-30 u-table-cell">Description</td>
-              </tr>
-              <tr style="height: 76px;">
-                <td class="u-border-1 u-border-grey-30 u-table-cell">Emaad ajmal</td>
-                <td class="u-border-1 u-border-grey-30 u-table-cell">Description</td>
-                <td class="u-border-1 u-border-grey-30 u-table-cell">Description</td>
-              </tr>
+              <% } %>
             </tbody>
           </table>
         </div>
@@ -209,5 +203,49 @@
         <span>Website Builder Software</span>
       </a>. 
     </section>
+    <script type="text/javascript">
+  
+  function sendUserInfo(){
+    var userFirstName = document.getElementById("partnerName_first").innerHTML;
+    var investment = document.getElementById("investment").innerHTML;
+    var date = document.getElementById("date").innerHTML;
+    var data = {};
+    data.userFirstName = userFirstName;
+    data.investment = investment;
+    data.date = date;
+    console.log(userFirstName +" "+investment+" "+date);
+    console.log(data);
+    $.ajax({
+      type: "POST",
+      data: JSON.stringify(data),
+      dataType: json,
+      url: '/updateUser',
+      success: function(data){
+        alert("Success");
+        data = JSON.parse(data);
+     console.dir(data);
+      }
+    });
+  }
+  // document.getElementById("updateData").onclick = function() { 
+  //   var name = document.getElementById("partnerName_first").value;
+  //     console.log(name);
+  //     fetch('/updateUser', {
+  //       method: 'POST',
+  //   body: 'user = hussain'
+  // })
+  //     .then(function(response){
+  //       console.log(response.json());
+  //       if(response.ok){
+  //         console.log('click was recorded');
+  //         return;
+  //       }
+  //       throw new Error('Request failed');
+  //     }).catch(function(error){
+  //       console.log(error+"+++++++++++error");
+  //     });
+  //   };
+  
+    </script>
   </body>
 </html>

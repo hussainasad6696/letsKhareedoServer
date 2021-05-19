@@ -23,6 +23,7 @@ const ParternsDetailSchema = new Schema({
     investmentDate_ampm: {
         type: String
     },
+    
 });
 
 const PartnersDetail = mongoose.model('PartnersDetail', ParternsDetailSchema);
