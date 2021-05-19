@@ -16,7 +16,7 @@ mongoose.connect('mongodb://localhost:27017/RestApi_letsKhareedo', {
 }).then(() => {
     console.log('mongodb connected');
 });
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(__dirname + '/views'));
 app.set('view engine', 'ejs');
 
@@ -110,6 +110,7 @@ app.set('view engine', 'ejs');
         console.log(req.body.partnerName_first+" "+req.body.partnerName_last);
     });
     app.post('/updateUser', (req, res) => {
+        console.log("updateUser here");
         console.log("updateUser: ============="+JSON.stringify(req.body));
     });
 
@@ -120,6 +121,13 @@ app.set('view engine', 'ejs');
         });
     });
 
+    app.post('/databaseEntryForm', (req, res) => {
+        console.log(req.body);
+        res.send(req.body);
+    });
+    app.get('/databaseEntryForm', (req, res) => {
+        res.render('DataBaseEntryFormPage');
+    });
 // zeenia's code
  app.get('/Sales-Sheet', (req, res) => {
      SoldProducts.find({}, (err, products)=>{

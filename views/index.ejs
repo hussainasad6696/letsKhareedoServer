@@ -216,10 +216,10 @@
     console.log(userFirstName +" "+investment+" "+date);
     console.log(data);
     $.ajax({
-      type: "POST",
-      data: JSON.stringify(data),
-      dataType: json,
+      type: "post",
       url: '/updateUser',
+      contentType: "application/json; charset=UTF-8",
+      data: JSON.stringify(data),
       success: function(data){
         alert("Success");
         data = JSON.parse(data);
