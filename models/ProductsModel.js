@@ -12,7 +12,7 @@ const ProductsSchema = new Schema({
         type: String,
     },
     quantity: {
-        type: int,
+        type: Number,
     },
     description: {
         type: String,
@@ -24,17 +24,11 @@ const ProductsSchema = new Schema({
         type: String,
     },
     type: {
-        shirt: {
-            size: {
-                type: String,
-            },
-        },
-        pant:{
-            waist: [{
-                type: String
-            }]
-        }
+        type: String,
     },
+    size: {
+        type: String
+    }
 });
 
 const Products = mongoose.model('Product', ProductsSchema);

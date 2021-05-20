@@ -5,6 +5,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var PartnersDetail = require('./models/PartnersModel');
+var Products = require('./models/ProductsModel');
 const portHttp = process.env.PORT || 8000;
 const portHttps = process.env.PORT || 8080;
 var app = express();
@@ -123,8 +124,11 @@ app.set('view engine', 'ejs');
     });
 
     app.post('/databaseEntryForm', (req, res) => {
-        console.log(req.body);
-        res.send(req.body);
+        var data = Products(req.body);
+        console.log(data);
+        console.log(req.body.imagePath);
+        var numberOfElements = req.body.imagePath;
+        console.log(numberOfElements.length);
     });
     app.get('/databaseEntryForm', (req, res) => {
         res.render('DataBaseEntryFormPage');
