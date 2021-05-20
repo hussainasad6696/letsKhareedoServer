@@ -1,8 +1,11 @@
 <html>
 <head>
-  <head>
     <script type='text/javascript'>
+
+    
          function addFields(){
+          var selectedValue = document.getElementById("type").value;
+            console.log(selectedValue);
             // Number of inputs to create
             var number = document.getElementById("items").value;
             // Container <div> where dynamic content will be placed
@@ -17,27 +20,31 @@
                 // Create an <input> element, set its type and name attributes
                 
 
-                var inputPath = document.createElement("input");
-                inputPath.type = "text";
-                inputPath.name = "Path";
-                inputPath.placeholder = "Select image path";
-                container.appendChild(inputPath);
+                // var inputPath = document.createElement("input");
+                // inputPath.type = "text";
+                // inputPath.name = "Path";
+                // inputPath.id = "pathToFile";
+                // inputPath.placeholder = "Select image path";
+                // container.appendChild(inputPath);
 
-                var button = document.createElement("button");
-                button.type = "button";
-                button.name = "button";
+                var button = document.createElement("input");
+                button.type = "file";
+                button.name = "imagePath";
+                button.id = "selectPhotoPath";
                 button.innerText = "Select Image";
                 container.appendChild(button);
+                // var x = document.getElementById("selectPhotoPath").value;
+                // document.getElementById("pathToFile").innerHTML = x;
                 // Create an <input> element, set its type and name attributes
                 var inputPrice = document.createElement("input");
                 inputPrice.type = "number";
-                inputPrice.name = "Price";
+                inputPrice.name = "price";
                 inputPrice.placeholder = "Price";
                 container.appendChild(inputPrice);
 
                 var inputQuantity = document.createElement("input");
                 inputQuantity.type = "number";
-                inputQuantity.name = "Quantity";
+                inputQuantity.name = "quantity";
                 inputQuantity.placeholder = "Quantity";
                 container.appendChild(inputQuantity);
 
@@ -49,38 +56,53 @@
 
                 var inputMaterial = document.createElement("input");
                 inputMaterial.type = "text";
-                inputMaterial.name = "Material";
+                inputMaterial.name = "material";
                 inputMaterial.placeholder = "Material";
                 container.appendChild(inputMaterial);
 
                 var inputBrand = document.createElement("input");
                 inputBrand.type = "text";
-                inputBrand.name = "Brand";
+                inputBrand.name = "brand";
                 inputBrand.placeholder = "Brand";
                 container.appendChild(inputBrand);
+                var nameOfTag = "Pant";
+                var placeHolder = "waist";
+              if(selectedValue == "pant")
+                { 
+                  nameOfTag = "pant";
+                  placeHolder = "Waist";
+              }else {
+                nameOfTag = "shirt";
+                placeHolder = "Size";
+              }
+              var inputSize = document.createElement("input");
+                inputSize.type = "text";
+                inputSize.name = nameOfTag;
+                inputSize.placeholder = placeHolder;
+                container.appendChild(inputSize);
 
-                var values = ["Shirt", "Pant"];
+    //             var values = ["Shirt", "Pant"];
  
-    var select = document.createElement("SELECT");
-    select.name = "type";
-    select.id = "type";
+    // var select = document.createElement("SELECT");
+    // select.name = "type";
+    // select.id = "type";
  
-    for (const val of values)
-    {
-        var option = document.createElement("option");
-        option.value = val;
-        option.text = val.charAt(0).toUpperCase() + val.slice(1);
-        select.appendChild(option);
-    }
-    document.getElementById("container").appendChild(select);
+    // for (const val of values)
+    // {
+    //     var option = document.createElement("option");
+    //     option.value = val;
+    //     option.text = val.charAt(0).toUpperCase() + val.slice(1);
+    //     select.appendChild(option);
+    // }
+    // document.getElementById("container").appendChild(select);
 
                
                 // Append a line break 
                 container.appendChild(document.createElement("br"));
             }
         }
+        
     </script>
-</head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body {font-family: Arial, Helvetica, sans-serif;}
@@ -134,7 +156,20 @@ body {font-family: Arial, Helvetica, sans-serif;}
 
   <input type="text" id="items" name="items" value="">Number of items<br />
   <a href="#" id="filldetails" onclick="addFields()">Add fields</a>
+  <br/>
+  <!-- <label>Type</label>
+  <select style="margin-left: 20px;" name="type" id="type">
+    <option value="shirt">Shirt</option>
+    <option value="pant">Pant</option>
+  </select>  -->
 <form class="form-inline" action="/databaseEntryForm" method="post">
+
+  <label>Type</label>
+  <select style="margin-left: 20px;" name="type" id="type">
+    <option value="shirt">Shirt</option>
+    <option value="pant">Pant</option>
+  </select> 
+  <br />
  <span id="headings" >
   <h4 class="inner-headings">ImagePath</h4>
   <h4 class="inner-headings" style="margin-left: 100px;">Price</h4>
@@ -142,7 +177,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
   <h4 class="inner-headings">Description</h4>
   <h4 class="inner-headings">Material</h4>
   <h4 class="inner-headings">Brand</h4>
-  <h4 class="inner-headings">Type</h4>
+  <h4 class="inner-headings">Size</h4>
 </span>
 <br/>
 
@@ -152,17 +187,18 @@ body {font-family: Arial, Helvetica, sans-serif;}
   <input type="number" id="quantityNumber" placeholder="Quantity" name="quantityNumber">
   <input type="text" id="description" placeholder="Description" name="description" name="description">
   <input type="text" id="material" placeholder="material" name="material">
-  <input type="text" id="brand" placeholder="Brand" name="brand" name="brand">
-  <select style="margin-left: 20px;" name="type" id="type">
-    <option value="shirt">Shirt</option>
-    <option value="pant">Pant</option>
-  </select> -->
-  
+  <input type="text" id="brand" placeholder="Brand" name="brand" name="brand">-->
+
   <div id="container" name="productData" ></div>
 
   <br/>
   <button type="submit">Submit</button>
 </form>
-
+<script>
+  function myFunction() {
+    var x = document.getElementById("myFile").value;
+    document.getElementById("demo").innerHTML = x;
+  }
+  </script>
 </body>
 </html>

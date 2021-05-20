@@ -13,8 +13,9 @@ mongoose.connect('mongodb://localhost:27017/RestApi_letsKhareedo', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false
-}).then(() => {
+}).then((message) => {
     console.log('mongodb connected');
+    console.log(message.isConnected);
 });
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(__dirname + '/views'));
@@ -128,6 +129,7 @@ app.set('view engine', 'ejs');
     app.get('/databaseEntryForm', (req, res) => {
         res.render('DataBaseEntryFormPage');
     });
+    
 // zeenia's code
  app.get('/Sales-Sheet', (req, res) => {
      SoldProducts.find({}, (err, products)=>{
