@@ -134,6 +134,9 @@ app.set('view engine', 'ejs');
         res.render('DataBaseEntryFormPage');
     });
     
+
+
+
 // zeenia's code
  app.get('/Sales-Sheet', (req, res) => {
      SoldProducts.find({}, (err, products)=>{
@@ -141,3 +144,8 @@ app.set('view engine', 'ejs');
          res.render('Sales-Sheet', {});
      })
  });
+
+
+ app.post('/userLogin', (req, res)=>{
+     
+ })
