@@ -8,9 +8,6 @@ const ParternsDetailSchema = new Schema({
     partnerName_last: {
         type: String
     },
-    partnerName_last: {
-        type: String
-    },
     latestInvestment:{
         type: String
     },
@@ -23,7 +20,12 @@ const ParternsDetailSchema = new Schema({
     investmentDate_ampm: {
         type: String
     },
-    
+    email : {
+        type: String
+    },
+    verifKey : {
+        type: String
+    }
 });
 
 const PartnersDetail = mongoose.model('PartnersDetail', ParternsDetailSchema);

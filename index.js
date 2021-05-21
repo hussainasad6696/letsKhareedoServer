@@ -5,13 +5,19 @@ const express = require('express');
 const mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 const multer = require('multer');
+const nodemailer = require('nodemailer');
 var PartnersDetail = require('./models/PartnersModel');
 var Products = require('./models/ProductsModel');
 var Client = require('./models/ClientModel');
-var SoldProducts = require('./models/SoldProductsModel')
+var SoldProducts = require('./models/SoldProductsModel');
+const { render } = require('ejs');
+
+
 const portHttp = process.env.PORT || 8000;
 const portHttps = process.env.PORT || 8080;
 var app = express();
+
+
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost:27017/RestApi_letsKhareedo', {
     useNewUrlParser: true,
@@ -21,9 +27,20 @@ mongoose.connect('mongodb://localhost:27017/RestApi_letsKhareedo', {
     console.log('mongodb connected');
     //console.log(message.isConnected);
 });
+
+
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(__dirname + '/views'));
 app.set('view engine', 'ejs');
+
+
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'letskhareedo@gmail.com',
+      pass: 'yourpassword'
+    }
+});
 
 
 const DIR = './public/uploads';
@@ -105,7 +122,6 @@ const DIR = './public/uploads';
              }).then((data, err) => {
                 if(err) {
                     console.log("error++++++++++++++++++++"+err);
-                return;
             }    
             }).catch(function(err) {
                 console.log(err+"error when posting")
@@ -114,16 +130,27 @@ const DIR = './public/uploads';
         console.log("i am here in partnersFormData")
         console.log(req.body.partnerName_first+" "+req.body.partnerName_last);
     });
+
     app.post('/updateUser', (req, res) => {
         console.log("updateUser here");
         console.log("updateUser: ============="+JSON.stringify(req.body));
     });
 
-    app.get('/crm', (req, res) => {
-        PartnersDetail.find({}, function (err,partners) {
-            console.log(partners+": data is here");
-            res.render('index', {person: "Mian Hussain", partner: partners});
-        });
+    app.get('/crm/:email', (req, res) => {
+        email = req.params.email;
+        key = req.verifKey;
+        PartnersDetail.findOne({email: email})
+        .then((partner)=>{
+            if(partner.verifKey === key){
+                PartnersDetail.find({}, function (err,partners) {
+                    console.log(partners+": data is here");
+                    res.render('index', {person: "Mian Hussain", partner: partners});
+                });
+            }
+            else{
+
+            }
+        })
     });
 
     app.post('/databaseEntryForm', (req, res) => {  
@@ -217,6 +244,55 @@ app.get('/admin-login', (req,res)=>{
     res.render('adminLogin');
 })
 
+app.get('/verification', (req, res)=>{
+    email = req.email;
+    password = req.password;
+    PartnersDetail.findOne({email: req.email})
+     .then(partner => {
+        if (partner){
+           if (partner.password  === req.password)
+           {
+              console.log('User logged in.');
+              var seq = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
+              var mailOptions = {
+                from: 'letskhareedo@gmail.com',
+                to: req.email,
+                subject: 'Verification Key',
+                text: `Your verification key is ${seq}.`
+              };
+              transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                  console.log(error);
+                } else {
+                    PartnersDetail.findByIdAndUpdate({_id: partner._id}, {verifKey: seq})
+                    .then(()=>{
+                        console.log('Email sent to admin '+info);
+                    })
+                }
+              });
+              res.render('/verif-key'+email);
+           }
+           else{
+               console.log('Invalid password');
+               res.status(400).send('Invalid password');
+           }
+        }
+        else{
+            console.log('Email does not exist in database.');
+            res.status(404).send('Invalid email.');
+        }
+})
+});
+
+app.get('/verif-key/:email', (req, res)=>{
+    res.render('verif-key', { 'email' : req.params.email });
+});
+
+app.post('verif-key', (req, res)=>{
+    
+})
+// continue from here
+
 app.post('/addClient', (req, res) => {
     const query = Client.where({phoneNumber: req.body.phoneNumber});
     if (query)
@@ -230,7 +306,7 @@ app.post('/addClient', (req, res) => {
             res.status(200).send('User added successfully.');
         })
     }
-})
+});
 
  app.post('/userLogin', (req, res)=>{
      Client.findOne({phoneNumber: req.phoneNumber})
