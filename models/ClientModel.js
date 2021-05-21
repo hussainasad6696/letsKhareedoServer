@@ -11,19 +11,31 @@ const ClientSchema = new Schema({
     phoneNumber: {
         type: String,
     },
-    
-    type: {
-        shirt: {
-            size: {
-                type: String,
-            },
-        },
-        pant:{
-            waist: [{
-                type: String
-            }]
-        }
+    email: {
+        type: String,
     },
+    password: {
+        type: String
+    },
+    orderList: [{ 
+        date:{
+            type: Date,
+        },
+        products: [{ 
+            productID: { 
+                type: String
+            },
+            quantity: { 
+                type: Number
+            },
+            size: { 
+                type: String
+            }
+        }],
+        bill: {
+            type: Number
+        }
+    }]
 });
 
 const Clients = mongoose.model('Client', ClientSchema);

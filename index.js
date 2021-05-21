@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var PartnersDetail = require('./models/PartnersModel');
 var Products = require('./models/ProductsModel');
+var Client = require('./models/ClientModel');
+var SoldProducts = require('./models/SoldProductsModel')
 const portHttp = process.env.PORT || 8000;
 const portHttps = process.env.PORT || 8080;
 var app = express();
@@ -16,7 +18,7 @@ mongoose.connect('mongodb://localhost:27017/RestApi_letsKhareedo', {
     useFindAndModify: false
 }).then((message) => {
     console.log('mongodb connected');
-    console.log(message.isConnected);
+    //console.log(message.isConnected);
 });
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(__dirname + '/views'));
@@ -124,20 +126,45 @@ app.set('view engine', 'ejs');
     });
 
     app.post('/databaseEntryForm', (req, res) => {
-        var data = Products(req.body);
-        console.log(data);
-        console.log(req.body.imagePath);
-        var numberOfElements = req.body.imagePath;
-        console.log(numberOfElements.length);
+        console.log(req.body);
+        sortingProductData(req.body, res);
     });
     app.get('/databaseEntryForm', (req, res) => {
         res.render('DataBaseEntryFormPage');
     });
     
-
+    function sortingProductData(data, res){
+        for(i = 0; i < data.imagePath.length; i++){
+            console.log("here");
+            var product = {};
+            if(data.imagePath[i] !== "" && data.price[i] !== "" && data.quantity[i] !== "" && data.description[i] !== ""
+            && data.material[i] !== "" && data.brand[i] !== "" && data.type[i] !== "" && data.size[i] !== "")
+            {
+            product.imagePath = data.imagePath[i];
+            product.price = data.price[i];
+            product.quantity = data.quantity[i];
+            product.description = data.description[i];
+            product.material = data.material[i];
+            product.brand = data.brand[i];
+            product.type = data.type[i];
+            product.size = data.size[i];
+            var products = Products(product);
+            console.log(products);
+            products.save(products).then(item =>{
+                // res.send('data saved to database');
+                res.send("Saved");
+            }).catch(err =>{
+                res.status(400).send("unable to save data to database");
+            });
+        }else {
+            console.log("Empty data so skipping");
+        }
+        }
+    }
 
 
 // zeenia's code
+
  app.get('/Sales-Sheet', (req, res) => {
      SoldProducts.find({}, (err, products)=>{
          console.log('Sold products are: '+products);
@@ -145,7 +172,57 @@ app.set('view engine', 'ejs');
      })
  });
 
+app.post('/addClient', (req, res) => {
+    const query = Client.where({phoneNumber: req.body.phoneNumber});
+    if (query)
+    {
+        console.log('This phone number is already registered.');
+        res.status(400).send('Phone number already registered.');
+    }
+    else{
+        Client.create(req.body).then((client)=>{
+            console.log('Client added: '+client);
+            res.status(200).send('User added successfully.');
+        })
+    }
+})
 
  app.post('/userLogin', (req, res)=>{
-     
- })
+     Client.findOne({phoneNumber: req.phoneNumber})
+     .then(client => {
+         if (client){
+            if (client.password  === req.password)
+            {
+               console.log('User login successful');
+               res.sendStatus(200);
+            }
+            else{
+                console.log('Invalid password');
+                res.status(400).send('Invalid password');
+            }
+         }
+         else{
+             console.log('Phone number does not exist in database.');
+             res.status(404).send('Invalid phone number.');
+         }
+     });
+ });
+
+app.post('/newOrder', (req, res)=>{
+    client = req.uid;
+    orderData = req.order;
+    Client.findByIdAndUpdate({_id: mongoose.Types.ObjectId(client)}, 
+    {$addToSet: {orderList: JSON.stringify(orderData)}},  
+    {safe: true, upsert: true, new: true}, (err, result)=>{
+        if (err){
+            console.log(err);
+        }
+        else{
+            console.log('Order added: '+ orderData);
+            products = orderData.products;
+            products.forEach(product =>{
+                Products.findByIdAndUpdate({_id: mongoose.Types.ObjectId(product.productID)},
+                {$inc: {quantity: -1}});
+            });
+        }});    // TODO: add pending status, but where?
+});

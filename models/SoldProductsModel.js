@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const SoldProductsSchema = new Schema({
-    uuid: {
+    pid: {
         type: String,
     },
     imagePath: {
@@ -12,7 +12,7 @@ const SoldProductsSchema = new Schema({
         type: String,
     },
     quantity: {
-        type: int,
+        type: Number,
     },
     description: {
         type: String,
@@ -24,17 +24,11 @@ const SoldProductsSchema = new Schema({
         type: String,
     },
     type: {
-        shirt: {
-            size: {
-                type: String,
-            },
-        },
-        pant:{
-            waist: [{
-                type: String
-            }]
-        }
+        type: String,
     },
+    size: {
+        type: String,
+    }
 });
 
 const SoldProducts = mongoose.model('SoldProduct', SoldProductsSchema);
