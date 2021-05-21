@@ -153,7 +153,7 @@ const DIR = './public/uploads';
             if(data.imagePath[i] !== "" && data.price[i] !== "" && data.quantity[i] !== "" && data.description[i] !== ""
             && data.material[i] !== "" && data.brand[i] !== "" && data.type[i] !== "" && data.size[i] !== "")
             {
-            product.imagePath = "./public/uploads"+data.imagePath[i];
+            product.imagePath = data.imagePath[i];
             product.price = data.price[i];
             product.quantity = data.quantity[i];
             product.description = data.description[i];
