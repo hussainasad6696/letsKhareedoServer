@@ -48,8 +48,6 @@ const DIR = './public/uploads';
     
     var userName;
 
-    var dbDataCheck = false;
-    var id;
     app.get('/partnersForDataPage', (req, res) => {
         var firstName;
         var lastName;
@@ -215,6 +213,10 @@ const DIR = './public/uploads';
      })
  });
 
+app.get('/admin-login', (req,res)=>{
+    res.render('adminLogin');
+})
+
 app.post('/addClient', (req, res) => {
     const query = Client.where({phoneNumber: req.body.phoneNumber});
     if (query)
@@ -261,11 +263,12 @@ app.post('/newOrder', (req, res)=>{
             console.log(err);
         }
         else{
-            console.log('Order added: '+ orderData);
+            console.log('Order added: '+ result);
             products = orderData.products;
             products.forEach(product =>{
                 Products.findByIdAndUpdate({_id: mongoose.Types.ObjectId(product.productID)},
-                {$inc: {quantity: -1}});
+                {$inc: {quantity: -1, pending: 1}});
             });
-        }});    // TODO: add pending status, but where?
+            res.status(200).send('Order has been placed.');
+        }});
 });
