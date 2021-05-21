@@ -4,11 +4,11 @@ const fs = require('fs');
 const express = require('express');
 const mongoose = require('mongoose');
 var bodyParser = require('body-parser');
+const multer = require('multer');
 var PartnersDetail = require('./models/PartnersModel');
 var Products = require('./models/ProductsModel');
 var Client = require('./models/ClientModel');
 var SoldProducts = require('./models/SoldProductsModel')
-var uploadData = require('./middleware/fileUpload.js')
 const portHttp = process.env.PORT || 8000;
 const portHttps = process.env.PORT || 8080;
 var app = express();
@@ -24,8 +24,9 @@ mongoose.connect('mongodb://localhost:27017/RestApi_letsKhareedo', {
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(__dirname + '/views'));
 app.set('view engine', 'ejs');
-app.use('/databaseEntryForm', uploadData);
 
+
+const DIR = './public/uploads';
 
     const sslServer = https.createServer({
         key: fs.readFileSync('./sslCert/key.pem'),
@@ -127,8 +128,7 @@ app.use('/databaseEntryForm', uploadData);
         });
     });
 
-    app.post('/databaseEntryForm', (req, res) => {
-        console.log(req.body);
+    app.post('/databaseEntryForm', (req, res) => {  
         sortingProductData(req.body, res);
     });
     app.get('/databaseEntryForm', (req, res) => {
@@ -136,7 +136,20 @@ app.use('/databaseEntryForm', uploadData);
     });
     
     function sortingProductData(data, res){
-        for(i = 0; i < data.imagePath.length; i++){
+        var number = parseInt(data.items);
+        if (number === 1){
+            console.log('save for one')
+            var product = Products(data);
+            console.log(product);
+            product.save(product).then(item =>{
+                // res.send('data saved to database');
+                res.send("Saved");
+            }).catch(err =>{
+                res.status(400).send("unable to save data to database");
+            });
+        }else{
+            console.log('save for multiple')
+        for(i = 0; i < number; i++){
             console.log("here");
             var product = {};
             if(data.imagePath[i] !== "" && data.price[i] !== "" && data.quantity[i] !== "" && data.description[i] !== ""
@@ -163,6 +176,34 @@ app.use('/databaseEntryForm', uploadData);
         }
         }
     }
+    }
+
+
+    function makeDirectory(){
+        fs.mkdir("./public/uploads", {recursive: true}, function(err){
+            if(err){
+                console.log(err);
+            }else {
+                console.log("New directory created");
+            }
+        });
+    }
+    makeDirectory();
+    const storage = multer.diskStorage({
+        destination : function(req, file, cb){
+            cb(null, DIR);
+        },
+        filename : function(req, file, cb){
+            const parts = file.mimetype.split("/");
+            cb(null, `${file.fieldname}-${Date.now()}.${parts[1]}`);
+        }
+    });
+
+    const upload = multer({storage});
+
+    app.post('/databaseEntryForm/save-image', upload.array("image"), (req, res) => {
+        res.send("Saved");
+    })
 
 
 // zeenia's code
