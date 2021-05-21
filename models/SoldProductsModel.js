@@ -28,6 +28,9 @@ const SoldProductsSchema = new Schema({
     },
     size: {
         type: String,
+    },
+    pending: {
+        type: Number,
     }
 });
 

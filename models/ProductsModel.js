@@ -24,7 +24,10 @@ const ProductsSchema = new Schema({
         type: String,
     },
     size: {
-        type: String
+        type: String,
+    },
+    pending: {
+        type: Number,
     }
 });
 
