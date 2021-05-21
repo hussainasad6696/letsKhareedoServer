@@ -8,6 +8,7 @@ var PartnersDetail = require('./models/PartnersModel');
 var Products = require('./models/ProductsModel');
 var Client = require('./models/ClientModel');
 var SoldProducts = require('./models/SoldProductsModel')
+var uploadData = require('./middleware/fileUpload.js')
 const portHttp = process.env.PORT || 8000;
 const portHttps = process.env.PORT || 8080;
 var app = express();
@@ -23,6 +24,7 @@ mongoose.connect('mongodb://localhost:27017/RestApi_letsKhareedo', {
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(__dirname + '/views'));
 app.set('view engine', 'ejs');
+app.use('/databaseEntryForm', uploadData);
 
 
     const sslServer = https.createServer({
