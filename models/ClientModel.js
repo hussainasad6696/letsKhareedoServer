@@ -34,6 +34,9 @@ const ClientSchema = new Schema({
         }],
         bill: {
             type: Number
+        },
+        status: {
+            type: String
         }
     }]
 });

@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ProductsSchema = new Schema({
+    name: {
+        type: String,
+    },
     imagePath: {
         type: String,
     },
@@ -28,6 +31,15 @@ const ProductsSchema = new Schema({
     },
     pending: {
         type: Number,
+    },
+    gender: {
+        type: String,
+    },
+    kids: {
+        type: String,
+    },
+    hotOrNot: {
+        type: Boolean,
     }
 });
 

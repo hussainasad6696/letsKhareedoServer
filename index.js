@@ -3,7 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const express = require('express');
 const mongoose = require('mongoose');
-var bodyParser = require('body-parser');
+const path = require("path");
 const multer = require('multer');
 const nodemailer = require('nodemailer');
 var PartnersDetail = require('./models/PartnersModel');
@@ -29,7 +29,10 @@ mongoose.connect('mongodb://localhost:27017/RestApi_letsKhareedo', {
 });
 
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.json());
+app.use(express.urlencoded({
+  extended: true
+}));
 app.use(express.static(__dirname + '/views'));
 app.set('view engine', 'ejs');
 
@@ -114,7 +117,7 @@ const DIR = './public/uploads';
                         }
                         data.save().then(item =>{
                                     // res.send('data saved to database');
-                                    res.redirect('/crm');
+                                    res.redirect('/dashboard');
                                 }).catch(err =>{
                                     res.status(400).send("unable to save data to database");
                                 });
@@ -136,7 +139,7 @@ const DIR = './public/uploads';
         console.log("updateUser: ============="+JSON.stringify(req.body));
     });
 
-    app.get('/crm/:email', (req, res) => {
+    app.get('/dashboard', (req, res) => {
         email = req.params.email;
         key = req.verifKey;
         PartnersDetail.findOne({email: email})
@@ -154,8 +157,10 @@ const DIR = './public/uploads';
     });
 
     app.post('/databaseEntryForm', (req, res) => {  
+        console.log(req.body);
         sortingProductData(req.body, res);
     });
+
     app.get('/databaseEntryForm', (req, res) => {
         res.render('DataBaseEntryFormPage');
     });
@@ -178,7 +183,8 @@ const DIR = './public/uploads';
             console.log("here");
             var product = {};
             if(data.imagePath[i] !== "" && data.price[i] !== "" && data.quantity[i] !== "" && data.description[i] !== ""
-            && data.material[i] !== "" && data.brand[i] !== "" && data.type[i] !== "" && data.size[i] !== "")
+            && data.material[i] !== "" && data.brand[i] !== "" && data.type[i] !== "" && data.size[i] !== ""
+            && data.name !== "")
             {
             product.imagePath = data.imagePath[i];
             product.price = data.price[i];
@@ -188,13 +194,17 @@ const DIR = './public/uploads';
             product.brand = data.brand[i];
             product.type = data.type[i];
             product.size = data.size[i];
+            product.gender = data.gender[i];
+            product.kids = data.kids[i];
+            product.hotOrNot = data.hotOrNot[i];
+            product.name = data.name[i];
             var products = Products(product);
             console.log(products);
             products.save(products).then(item =>{
                 // res.send('data saved to database');
                 res.send("Saved");
             }).catch(err =>{
-                res.status(400).send("unable to save data to database");
+                res.send("unable to save data to database");
             });
         }else {
             console.log("Empty data so skipping");
@@ -285,13 +295,23 @@ app.get('/verification', (req, res)=>{
 });
 
 app.get('/verif-key/:email', (req, res)=>{
+    console.log(req.params.email);
     res.render('verif-key', { 'email' : req.params.email });
 });
 
-app.post('verif-key', (req, res)=>{
-    
+app.post('verif-key/:email', (req, res)=>{
+    email =  req.params.email;
+    PartnersDetail.findOne({email: req.email})
+    .then((partner)=>{
+        if(partner.verifKey === req.key){
+            res.render('/dashboard');
+        }
+        else{
+            alert('Wrong key entered. Try again.');
+            res.render('verif-key');
+        }
+    })
 })
-// continue from here
 
 app.post('/addClient', (req, res) => {
     const query = Client.where({phoneNumber: req.body.phoneNumber});
@@ -348,3 +368,66 @@ app.post('/newOrder', (req, res)=>{
             res.status(200).send('Order has been placed.');
         }});
 });
+
+app.get('/products/male', (req, res)=>{
+    Products.find({gender: 'male'})
+    .then((prod)=>{
+        res.send(prod);
+    })
+})
+
+app.get('/products/female', (req, res)=>{
+    Products.find({gender: 'female'})
+    .then((prod)=>{
+        res.send(prod);
+        console.log('Data sent.');
+    })
+})
+
+app.get('/products/male/kids', (req, res)=>{
+    Products.find({gender: 'male', kids: 'yes'})
+    .then((prod)=>{
+        res.send(prod);
+        console.log('Data sent.');
+    })
+})
+
+app.get('/products/female/kids', (req, res)=>{
+    Products.find({gender: 'female', kids: 'yes'})
+    .then((prod)=>{
+        res.send(prod);
+        console.log('Data sent.');
+    })
+})
+
+app.get('/products/accessories', (req, res)=>{
+    Products.find({type: 'accessories'})
+    .then((prod)=>{
+        res.send(prod);
+        console.log('Data sent.');
+    })
+})
+
+app.get('/products/store', (req, res)=>{
+    Products.find()
+    .then((prod)=>{
+        res.send(prod);
+        console.log('Data sent.');
+    })
+})
+
+app.get('/products/images', (req, res) => {
+    console.log(req.query.id);
+    id = req.query.id;
+    fp = "./public/uploads/"+id;
+    res.sendFile(fp, { root: __dirname });
+    console.log('Data sent.');
+})
+
+app.get('/products/hotOrNot', (req, res)=>{
+    Products.find({hotOrNot: 'yes'})
+    .then((prod)=>{
+        res.send(prod);
+        console.log('Data sent.');
+    })
+})

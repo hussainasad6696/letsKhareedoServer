@@ -19,12 +19,13 @@
                 // Create an <input> element, set its type and name attributes
                 
 
-                // var inputPath = document.createElement("input");
-                // inputPath.type = "text";
-                // inputPath.name = "Path";
-                // inputPath.id = "pathToFile";
-                // inputPath.placeholder = "Select image path";
-                // container.appendChild(inputPath);
+                var inputPath = document.createElement("input");
+                inputPath.type = "text";
+                inputPath.name = "name";
+                inputPath.id = "productName";
+                inputPath.placeholder = "ProductName";
+                container.appendChild(inputPath);
+
 
                 var button = document.createElement("input");
                 button.type = "file";
@@ -79,20 +80,32 @@
                 inputSize.placeholder = "size";
                 container.appendChild(inputSize);
 
-    //             var values = ["Shirt", "Pant"];
- 
-    // var select = document.createElement("SELECT");
-    // select.name = "type";
-    // select.id = "type";
- 
-    // for (const val of values)
-    // {
-    //     var option = document.createElement("option");
-    //     option.value = val;
-    //     option.text = val.charAt(0).toUpperCase() + val.slice(1);
-    //     select.appendChild(option);
-    // }
-    // document.getElementById("container").appendChild(select);
+                var inputSize = document.createElement("input");
+                inputSize.type = "text";
+                inputSize.name = "gender";
+                inputSize.placeholder = "Gender";
+                container.appendChild(inputSize);
+
+                // var labelhot = document.createElement("label");
+                // labelhot.innerText = "Hot product";
+                // container.appendChild(labelhot);
+
+                var inputhot = document.createElement("input");
+                inputhot.type = "text";
+                inputhot.name = "hotOrNot";
+                inputhot.placeholder = "hotOrNot";
+                container.appendChild(inputhot);
+
+                // var labelkids = document.createElement("label");
+                // labelkids.innerText = "For Kids";
+                // container.appendChild(labelkids);
+
+                var inputkids = document.createElement("input");
+                inputkids.type = "text";
+                inputkids.name = "kids";
+                inputkids.placeholder = "kids";
+                container.appendChild(inputkids);
+
 
                
                 // Append a line break 
@@ -110,7 +123,6 @@ body {font-family: Arial, Helvetica, sans-serif;}
 
 .form-inline input {
   vertical-align: middle;
-  padding: 5px;
   background-color: #fff;
   border: 1px solid #ddd;
 }
@@ -128,9 +140,9 @@ body {font-family: Arial, Helvetica, sans-serif;}
   background-color: royalblue;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 500px) {
   .form-inline input {
-    margin: 10px 0;
+    margin: 5px 0;
   }
   
   .form-inline {
