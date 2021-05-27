@@ -10,6 +10,8 @@ var PartnersDetail = require('./models/PartnersModel');
 var Products = require('./models/ProductsModel');
 var Client = require('./models/ClientModel');
 var SoldProducts = require('./models/SoldProductsModel');
+const DIR = './public/uploads';
+const SLIDER_DIR = './public/uploads/slider';
 const { render } = require('ejs');
 
 
@@ -46,7 +48,6 @@ var transporter = nodemailer.createTransport({
 });
 
 
-const DIR = './public/uploads';
 
     const sslServer = https.createServer({
         key: fs.readFileSync('./sslCert/key.pem'),
@@ -157,10 +158,7 @@ const DIR = './public/uploads';
         // })
     });
 
-    app.post('/databaseEntryForm', (req, res) => {  
-        console.log(req.body);
-        sortingProductData(req.body, res);
-    });
+    
 
     app.get('/databaseEntryForm', (req, res) => {
         res.render('DataBaseEntryFormPage');
@@ -180,7 +178,7 @@ const DIR = './public/uploads';
             });
         }else{
             console.log('save for multiple')
-        for(i = 0; i < number; i++){
+         for(i = 0; i < number; i++){
             console.log("here");
             var product = {};
             if(data.imagePath[i] !== "" && data.price[i] !== "" && data.quantity[i] !== "" && data.description[i] !== ""
@@ -216,7 +214,7 @@ const DIR = './public/uploads';
 
 
     function makeDirectory(){
-        fs.mkdir("./public/uploads", {recursive: true}, function(err){
+        fs.mkdir(SLIDER_DIR, {recursive: true}, function(err){
             if(err){
                 console.log(err);
             }else {
@@ -227,11 +225,14 @@ const DIR = './public/uploads';
     makeDirectory();
     const storage = multer.diskStorage({
         destination : function(req, file, cb){
+            if(req.body.slider === "slider")
+            cb(null, SLIDER_DIR);
+            else
             cb(null, DIR);
         },
         filename : function(req, file, cb){
-            const parts = file.mimetype.split("/");
-            cb(null, `${file.fieldname}-${Date.now()}.${parts[1]}`);
+            console.log(`${JSON.stringify(req.body.slider)}==============filename=`)
+            cb(null, `${file.originalname}`);
         }
     });
 
@@ -241,7 +242,29 @@ const DIR = './public/uploads';
         res.send("Saved");
     })
 
+    app.post('/databaseEntryForm/save-slider-image', upload.array("image"), (req, res) => {
+        res.send("Saved");
+    })
+    
+    app.post('/databaseEntryForm', (req, res) => {  
+        console.log(req.body);
+        sortingProductData(req.body, res);
+    });
 
+    app.get('/databaseEntryForm/slider-images', (req, res) => {
+        var imagesList = [];
+        const pathOfSliderImages = path.join(__dirname, 'public/uploads/slider');
+        fs.readdir(pathOfSliderImages, function(err, files){
+            if(err){
+               return console.log(`${err} from image reading`)
+            }
+            files.forEach(function(file){
+                imagesList.push(file);
+            })
+            console.log(imagesList + "  ==========list")
+            res.send(imagesList);
+        })
+    })
 // zeenia's code
 
  app.get('/Sales-Sheet', (req, res) => {
@@ -438,6 +461,7 @@ app.get('/products/images', (req, res) => {
     id = req.query.id;
     fp = "./public/uploads/"+id;
     res.sendFile(fp, { root: __dirname });
+    // res.send(fp);
     console.log('Data sent.');
 });
 
