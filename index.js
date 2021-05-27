@@ -464,6 +464,12 @@ app.get('/products/images', (req, res) => {
     // res.send(fp);
     console.log('Data sent.');
 });
+app.get('/products/sliderImages', (req, res) => {
+    console.log(req.query.id+"++++++++++++++++++++++++++++++++++++++++++++++");
+    id = req.query.id;
+    fp = "./public/uploads/slider/"+id;
+    res.sendFile(fp, { root: __dirname });
+})
 
 app.get('/products/hotOrNot', (req, res)=>{
     Products.find({hotOrNot: 'yes'})
