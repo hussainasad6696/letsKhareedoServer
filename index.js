@@ -71,7 +71,8 @@ const DIR = './public/uploads';
     app.get('/partnersForDataPage', (req, res) => {
         var firstName;
         var lastName;
-        console.log(userName+"====================="+ req.body);
+        //console.log(userName+"====================="+ req.body);
+        res.render('Partner_Update_Form');
         // PartnersDetail.findOne({partnerName_first: userName}, 
         //     function(err,partners) {
         //         console.log("getMethod of partnersForDataPage: "+ partners);
@@ -140,20 +141,20 @@ const DIR = './public/uploads';
     });
 
     app.get('/dashboard', (req, res) => {
-        email = req.params.email;
-        key = req.verifKey;
-        PartnersDetail.findOne({email: email})
-        .then((partner)=>{
-            if(partner.verifKey === key){
+        // email = req.params.email;
+        // key = req.verifKey;
+        // PartnersDetail.findOne({email: email})
+        // .then((partner)=>{
+        //     if(partner.verifKey === key){
                 PartnersDetail.find({}, function (err,partners) {
                     console.log(partners+": data is here");
                     res.render('index', {person: "Mian Hussain", partner: partners});
                 });
-            }
-            else{
+        //    }
+        //     else{
 
-            }
-        })
+        //     }
+        // })
     });
 
     app.post('/databaseEntryForm', (req, res) => {  
@@ -299,6 +300,22 @@ app.get('/verif-key/:email', (req, res)=>{
     res.render('verif-key', { 'email' : req.params.email });
 });
 
+app.get('/addCustomer', (req, res)=>{
+    res.render('addClient');
+});
+
+app.post('/addCustomer', (req, res)=>{
+
+});
+
+app.get('/addPartner', (req, res)=>{
+    res.render('addPartner');
+});
+
+app.post('/addPartner', (req, res)=>{
+    
+});
+
 app.post('verif-key/:email', (req, res)=>{
     email =  req.params.email;
     PartnersDetail.findOne({email: req.email})
@@ -311,7 +328,7 @@ app.post('verif-key/:email', (req, res)=>{
             res.render('verif-key');
         }
     })
-})
+});
 
 app.post('/addClient', (req, res) => {
     const query = Client.where({phoneNumber: req.body.phoneNumber});
@@ -374,7 +391,7 @@ app.get('/products/male', (req, res)=>{
     .then((prod)=>{
         res.send(prod);
     })
-})
+});
 
 app.get('/products/female', (req, res)=>{
     Products.find({gender: 'female'})
@@ -382,7 +399,7 @@ app.get('/products/female', (req, res)=>{
         res.send(prod);
         console.log('Data sent.');
     })
-})
+});
 
 app.get('/products/male/kids', (req, res)=>{
     Products.find({gender: 'male', kids: 'yes'})
@@ -390,7 +407,7 @@ app.get('/products/male/kids', (req, res)=>{
         res.send(prod);
         console.log('Data sent.');
     })
-})
+});
 
 app.get('/products/female/kids', (req, res)=>{
     Products.find({gender: 'female', kids: 'yes'})
@@ -398,7 +415,7 @@ app.get('/products/female/kids', (req, res)=>{
         res.send(prod);
         console.log('Data sent.');
     })
-})
+});
 
 app.get('/products/accessories', (req, res)=>{
     Products.find({type: 'accessories'})
@@ -406,7 +423,7 @@ app.get('/products/accessories', (req, res)=>{
         res.send(prod);
         console.log('Data sent.');
     })
-})
+});
 
 app.get('/products/store', (req, res)=>{
     Products.find()
@@ -414,7 +431,7 @@ app.get('/products/store', (req, res)=>{
         res.send(prod);
         console.log('Data sent.');
     })
-})
+});
 
 app.get('/products/images', (req, res) => {
     console.log(req.query.id);
@@ -422,7 +439,7 @@ app.get('/products/images', (req, res) => {
     fp = "./public/uploads/"+id;
     res.sendFile(fp, { root: __dirname });
     console.log('Data sent.');
-})
+});
 
 app.get('/products/hotOrNot', (req, res)=>{
     Products.find({hotOrNot: 'yes'})
@@ -430,4 +447,4 @@ app.get('/products/hotOrNot', (req, res)=>{
         res.send(prod);
         console.log('Data sent.');
     })
-})
+});
