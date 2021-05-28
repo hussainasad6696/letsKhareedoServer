@@ -11,7 +11,8 @@ var Products = require('./models/ProductsModel');
 var Client = require('./models/ClientModel');
 var SoldProducts = require('./models/SoldProductsModel');
 const DIR = './public/uploads';
-const SLIDER_DIR = './public/uploads/slider';
+const SLIDER_DIR = DIR + '/slider';
+const ADD_IMAGES_DIR = DIR + '/advertisement';
 const { render } = require('ejs');
 
 
@@ -221,12 +222,19 @@ var transporter = nodemailer.createTransport({
                 console.log("New directory created");
             }
         });
+        fs.mkdir(ADD_IMAGES_DIR , { recursive : true}, function(err){
+            if(err){
+                console.log(err);
+            }else console.log("Add Images Dir Created");
+        })
     }
     makeDirectory();
     const storage = multer.diskStorage({
         destination : function(req, file, cb){
             if(req.body.slider === "slider")
             cb(null, SLIDER_DIR);
+            else if(req.body.addvert === "addvert")
+            cb(null, ADD_IMAGES_DIR);
             else
             cb(null, DIR);
         },
@@ -242,7 +250,11 @@ var transporter = nodemailer.createTransport({
         res.send("Saved");
     })
 
-    app.post('/databaseEntryForm/save-slider-image', upload.array("image"), (req, res) => {
+    app.post('/databaseEntryForm/save-slider-image', upload.array("image" , 3), (req, res) => {
+        res.send("Saved");
+    })
+
+    app.post('/databaseEntryForm/save-addvertisment-image', upload.array("image"), (req, res) => {
         res.send("Saved");
     })
     
@@ -263,6 +275,21 @@ var transporter = nodemailer.createTransport({
             })
             console.log(imagesList + "  ==========list")
             res.send(imagesList);
+        })
+    })
+
+    app.get('/databaseEntryForm/advertisement', (req, res) => {
+        var imageList = [];
+        const pathOfAdds = path.join(__dirname, 'public/uploads/advertisement');
+        fs.readdir(pathOfAdds, function (err, files) {
+            if(err) {
+                return console.log(err+ "from reading advertisement folder");
+            }
+            files.forEach(function(file) {
+                imageList.push(file);
+            })
+            console.log(imageList);
+            res.send(imageList);
         })
     })
 // zeenia's code
@@ -468,6 +495,13 @@ app.get('/products/sliderImages', (req, res) => {
     console.log(req.query.id+"++++++++++++++++++++++++++++++++++++++++++++++");
     id = req.query.id;
     fp = "./public/uploads/slider/"+id;
+    res.sendFile(fp, { root: __dirname });
+})
+
+app.get('/products/advertImages', (req, res) => {
+    console.log(req.query.id+"++++++++++++++++++++++++++++++++++++++++++++++");
+    id = req.query.id;
+    fp = ADD_IMAGES_DIR+"/"+id;
     res.sendFile(fp, { root: __dirname });
 })
 
