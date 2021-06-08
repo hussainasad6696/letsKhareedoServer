@@ -16,5 +16,11 @@ const UserDataSchema = new Schema({
     },
     address: {
         type: String,
+    },
+    sercurityToken: {
+        type: String,
     }
 });
+
+const UserData = mongoose.model('UserData', UserDataSchema);
+module.exports = UserData;

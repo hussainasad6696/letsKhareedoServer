@@ -10,6 +10,7 @@ var PartnersDetail = require('./models/PartnersModel');
 var Products = require('./models/ProductsModel');
 var Client = require('./models/ClientModel');
 var SoldProducts = require('./models/SoldProductsModel');
+var UserData = require('./models/UserDataModel');
 const DIR = './public/uploads';
 const SLIDER_DIR = DIR + '/slider';
 const ADD_IMAGES_DIR = DIR + '/advertisement';
@@ -292,6 +293,18 @@ var transporter = nodemailer.createTransport({
             res.send(imageList);
         })
     })
+
+app.post('/login/userData', (req, res) => {
+    var userData = UserData(req.body);
+    userData.save().then(() =>{
+        res.send(req.body);
+    }).catch(err =>{
+        console.log(err+" error on add userData");
+    });
+});
+
+
+
 // zeenia's code
 
  app.get('/Sales-Sheet', (req, res) => {
