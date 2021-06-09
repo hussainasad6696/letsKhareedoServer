@@ -17,6 +17,18 @@ const ClientSchema = new Schema({
     password: {
         type: String
     },
+    profileImageByteStream: {
+        type: String
+    },
+    verificationStatus: {
+        type: String
+    },
+    verificationCode: {
+        type: String
+    },
+    profileImageName: { 
+        type: String
+    },
     orderList: [{ 
         date:{
             type: Date,

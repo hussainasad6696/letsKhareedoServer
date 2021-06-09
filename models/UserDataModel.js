@@ -17,7 +17,10 @@ const UserDataSchema = new Schema({
     address: {
         type: String,
     },
-    sercurityToken: {
+    sercurityToken: { //for login and authentication
+        type: String,
+    },
+    profileImagePath: {
         type: String,
     }
 });
