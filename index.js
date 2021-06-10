@@ -3,6 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const express = require('express');
 const mongoose = require('mongoose');
+global.constants = require('./constants');
 const path = require("path");
 const multer = require('multer');
 const nodemailer = require('nodemailer');
@@ -71,7 +72,7 @@ var transporter = nodemailer.createTransport({
     
     var userName;
 
-    app.get('/partnersForDataPage', (req, res) => {
+    app.get(constants.PARTNERS_FOR_DATAPAGE, (req, res) => {
         var firstName;
         var lastName;
         //console.log(userName+"====================="+ req.body);
@@ -107,7 +108,7 @@ var transporter = nodemailer.createTransport({
         // });
     });
 
-    app.post('/partnersForDataPage', (req, res) =>{
+    app.post(constants.PARTNERS_FOR_DATAPAGE, (req, res) =>{
         PartnersDetail.findOneAndUpdate({partnerName_first: req.body.partnerName_first},
             req.body,
              {
@@ -138,12 +139,12 @@ var transporter = nodemailer.createTransport({
         console.log(req.body.partnerName_first+" "+req.body.partnerName_last);
     });
 
-    app.post('/updateUser', (req, res) => {
+    app.post(constants.UPDATE_USER, (req, res) => {
         console.log("updateUser here");
         console.log("updateUser: ============="+JSON.stringify(req.body));
     });
 
-    app.get('/dashboard', (req, res) => {
+    app.get(constants.DASHBOARD, (req, res) => {
         // email = req.params.email;
         // key = req.verifKey;
         // PartnersDetail.findOne({email: email})
@@ -162,7 +163,7 @@ var transporter = nodemailer.createTransport({
 
     
 
-    app.get('/databaseEntryForm', (req, res) => {
+    app.get(constants.DATABASE_ENTRY_FORM, (req, res) => {
         res.render('DataBaseEntryFormPage');
     });
     
@@ -247,24 +248,24 @@ var transporter = nodemailer.createTransport({
 
     const upload = multer({storage});
 
-    app.post('/databaseEntryForm/save-image', upload.array("image"), (req, res) => {
+    app.post(constants.ADVERTISEMENT_IMAGE, upload.array("image"), (req, res) => {
         res.send("Saved");
     })
 
-    app.post('/databaseEntryForm/save-slider-image', upload.array("image" , 3), (req, res) => {
+    app.post(constants.ADVERTISEMENT_SLIDER_IMAGE, upload.array("image" , 3), (req, res) => {
         res.send("Saved");
     })
 
-    app.post('/databaseEntryForm/save-addvertisment-image', upload.array("image"), (req, res) => {
+    app.post(constants.SAVE_ADVERT_IMAGE, upload.array("image"), (req, res) => {
         res.send("Saved");
     })
     
-    app.post('/databaseEntryForm', (req, res) => {  
+    app.post(constants.DATABASE_ENTRY_FORM, (req, res) => {  
         console.log(req.body);
         sortingProductData(req.body, res);
     });
 
-    app.get('/databaseEntryForm/slider-images', (req, res) => {
+    app.get(constants.SLIDER_IMAGE, (req, res) => {
         var imagesList = [];
         const pathOfSliderImages = path.join(__dirname, 'public/uploads/slider');
         fs.readdir(pathOfSliderImages, function(err, files){
@@ -279,7 +280,7 @@ var transporter = nodemailer.createTransport({
         })
     })
 
-    app.get('/databaseEntryForm/advertisement', (req, res) => {
+    app.get(constants.ADVERTISEMENT, (req, res) => {
         var imageList = [];
         const pathOfAdds = path.join(__dirname, 'public/uploads/advertisement');
         fs.readdir(pathOfAdds, function (err, files) {
@@ -307,18 +308,19 @@ var transporter = nodemailer.createTransport({
 
 // zeenia's code
 
- app.get('/Sales-Sheet', (req, res) => {
+
+ app.get(constants.SALES_SHEET, (req, res) => {
      SoldProducts.find({}, (err, products)=>{
          console.log('Sold products are: '+products);
          res.render('Sales-Sheet', {});
      })
  });
 
-app.get('/admin-login', (req,res)=>{
+app.get(constants.ADMIN_LOGIN, (req,res)=>{
     res.render('adminLogin');
 })
 
-app.get('/verification', (req, res)=>{
+app.get(constants.VERIFICATION, (req, res)=>{
     email = req.email;
     password = req.password;
     PartnersDetail.findOne({email: req.email})
@@ -344,7 +346,7 @@ app.get('/verification', (req, res)=>{
                     })
                 }
               });
-              res.render('/verif-key'+email);
+              res.render(constants.VERIF_KEY+email);
            }
            else{
                console.log('Invalid password');
@@ -358,27 +360,28 @@ app.get('/verification', (req, res)=>{
 })
 });
 
-app.get('/verif-key/:email', (req, res)=>{
+app.get(constants.VERIF_KEY_MAIL, (req, res)=>{
     console.log(req.params.email);
-    res.render('verif-key', { 'email' : req.params.email });
+    res.render(constants.VERIF_KEY, { 'email' : req.params.email });
 });
 
-app.get('/addCustomer', (req, res)=>{
+app.get(constants.ADD_CUSTOMER, (req, res)=>{
     res.render('addClient');
 });
 
 
 // adding app using clients to db and checking their uniqueness
-app.post('/addCustomer', (req, res)=>{
+app.post(constants.ADD_CUSTOMER, (req, res)=>{
     console.log(req.body+ ": a new user is added to db");
     Client.findOne({phoneNumber: req.body.phoneNumber}, function(err,partners){
         if(err) {console.log(err + ": error while checking if client already exists or not");}
         if(partners){
-            res.send("User already exists");
+            res.status(500).send("User already exists");
         }else {
             var client = Client(req.body);
                 client.save().then(function(response){
             console.log(response+": add user response======================================");
+            res.status(200).send('Saved');
             }).catch(function(err){
                 console.log(err+": add user error =========================================");
     });
@@ -387,15 +390,15 @@ app.post('/addCustomer', (req, res)=>{
     
 });
 
-app.get('/addPartner', (req, res)=>{
+app.get(constants.ADD_PARTNER, (req, res)=>{
     res.render('addPartner');
 });
 
-app.post('/addPartner', (req, res)=>{
+app.post(constants.ADD_PARTNER, (req, res)=>{
     
 });
 
-app.post('verif-key/:email', (req, res)=>{
+app.post(constants.VERIF_KEY_MAIL, (req, res)=>{
     email =  req.params.email;
     PartnersDetail.findOne({email: req.email})
     .then((partner)=>{
@@ -409,22 +412,7 @@ app.post('verif-key/:email', (req, res)=>{
     })
 });
 
-app.post('/addClient', (req, res) => {
-    const query = Client.where({phoneNumber: req.body.phoneNumber});
-    if (query)
-    {
-        console.log('This phone number is already registered.');
-        res.status(400).send('Phone number already registered.');
-    }
-    else{
-        Client.create(req.body).then((client)=>{
-            console.log('Client added: '+client);
-            res.status(200).send('User added successfully.');
-        })
-    }
-});
-
- app.post('/userLogin', (req, res)=>{
+ app.post(constants.USER_LOGIN, (req, res)=>{
      console.log(req.body+ ": userlogin data is here");
      Client.findOne({phoneNumber: req.phoneNumber})
      .then(client => {
@@ -446,7 +434,7 @@ app.post('/addClient', (req, res) => {
      });
  });
 
-app.post('/newOrder', (req, res)=>{
+app.post(constants.NEW_ORDER, (req, res)=>{
     client = req.uid;
     orderData = req.order;
     Client.findByIdAndUpdate({_id: mongoose.Types.ObjectId(client)}, 
@@ -466,54 +454,49 @@ app.post('/newOrder', (req, res)=>{
         }});
 });
 
-app.get('/products/male', (req, res)=>{
+app.get(constants.MALE_PRODUCTS, (req, res)=>{
     Products.find({gender: 'male'})
     .then((prod)=>{
         res.send(prod);
     })
 });
 
-app.get('/products/female', (req, res)=>{
+app.get(constants.FEMALE_PRODUCTS, (req, res)=>{
     Products.find({gender: 'female'})
     .then((prod)=>{
         res.send(prod);
-        console.log('Data sent.');
     })
 });
 
-app.get('/products/male/kids', (req, res)=>{
+app.get(constants.MALE_KIDS_PRODUCTS, (req, res)=>{
     Products.find({gender: 'male', kids: 'yes'})
     .then((prod)=>{
         res.send(prod);
-        console.log('Data sent.');
     })
 });
 
-app.get('/products/female/kids', (req, res)=>{
+app.get(constants.FEMALE_KIDS_PRODUCTS, (req, res)=>{
     Products.find({gender: 'female', kids: 'yes'})
     .then((prod)=>{
         res.send(prod);
-        console.log('Data sent.');
     })
 });
 
-app.get('/products/accessories', (req, res)=>{
+app.get(constants.ACCESSORIES_PRODUCTS, (req, res)=>{
     Products.find({type: 'accessories'})
     .then((prod)=>{
         res.send(prod);
-        console.log('Data sent.');
     })
 });
 
-app.get('/products/store', (req, res)=>{
+app.get(constants.PRODUCTS_STORE, (req, res)=>{
     Products.find()
     .then((prod)=>{
         res.send(prod);
-        console.log('Data sent.');
     })
 });
 
-app.get('/products/images', (req, res) => {
+app.get(constants.PRODUCT_IMAGES, (req, res) => {
     console.log(req.query.id);
     id = req.query.id;
     fp = "./public/uploads/"+id;
@@ -521,21 +504,22 @@ app.get('/products/images', (req, res) => {
     // res.send(fp);
     console.log('Data sent.');
 });
-app.get('/products/sliderImages', (req, res) => {
+
+app.get(constants.PRODUCT_SLIDER_IMAGES, (req, res) => {
     console.log(req.query.id+"++++++++++++++++++++++++++++++++++++++++++++++");
     id = req.query.id;
     fp = "./public/uploads/slider/"+id;
     res.sendFile(fp, { root: __dirname });
 })
 
-app.get('/products/advertImages', (req, res) => {
+app.get(constants.PRODUCT_ADVERT_IMAGES, (req, res) => {
     console.log(req.query.id+"++++++++++++++++++++++++++++++++++++++++++++++");
     id = req.query.id;
     fp = ADD_IMAGES_DIR+"/"+id;
     res.sendFile(fp, { root: __dirname });
 })
 
-app.get('/products/hotOrNot', (req, res)=>{
+app.get(constants.HOT_OR_NOT, (req, res)=>{
     Products.find({hotOrNot: 'yes'})
     .then((prod)=>{
         res.send(prod);
