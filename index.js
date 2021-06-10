@@ -367,14 +367,24 @@ app.get('/addCustomer', (req, res)=>{
     res.render('addClient');
 });
 
+
+// adding app using clients to db and checking their uniqueness
 app.post('/addCustomer', (req, res)=>{
     console.log(req.body+ ": a new user is added to db");
-    var client = Client(req.body);
-    client.save().then(function(response){
-        console.log(response+": add user response======================================");
-    }).catch(function(err){
-        console.log(err+": add user error =========================================");
+    Client.findOne({phoneNumber: req.body.phoneNumber}, function(err,partners){
+        if(err) {console.log(err + ": error while checking if client already exists or not");}
+        if(partners){
+            res.send("User already exists");
+        }else {
+            var client = Client(req.body);
+                client.save().then(function(response){
+            console.log(response+": add user response======================================");
+            }).catch(function(err){
+                console.log(err+": add user error =========================================");
     });
+        }
+    });
+    
 });
 
 app.get('/addPartner', (req, res)=>{
