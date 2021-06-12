@@ -275,7 +275,6 @@ var transporter = nodemailer.createTransport({
             files.forEach(function(file){
                 imagesList.push(file);
             })
-            console.log(imagesList + "  ==========list")
             res.send(imagesList);
         })
     })
@@ -412,27 +411,25 @@ app.post(constants.VERIF_KEY_MAIL, (req, res)=>{
     })
 });
 
- app.post(constants.USER_LOGIN, (req, res)=>{
-     console.log(req.body+ ": userlogin data is here");
-     Client.findOne({phoneNumber: req.phoneNumber})
-     .then(client => {
-         if (client){
-            if (client.password  === req.password)
-            {
-               console.log('User login successful');
-               res.sendStatus(200);
-            }
-            else{
-                console.log('Invalid password');
-                res.status(400).send('Invalid password');
-            }
+app.post(constants.USER_LOGIN, (req, res) => {
+    Client.findOne({email: req.body.email}).then((client)=>{
+        if (client){
+            if (client.email  === req.body.email)
+           {
+              console.log('User login successful');
+              res.status(200).send(client);
+           }
+           else{
+               console.log('Invalid password');
+               res.status(400).send('Invalid password');
+           }
          }
          else{
              console.log('Phone number does not exist in database.');
              res.status(404).send('Invalid phone number.');
          }
-     });
- });
+    })
+});
 
 app.post(constants.NEW_ORDER, (req, res)=>{
     client = req.uid;
@@ -502,18 +499,15 @@ app.get(constants.PRODUCT_IMAGES, (req, res) => {
     fp = "./public/uploads/"+id;
     res.sendFile(fp, { root: __dirname });
     // res.send(fp);
-    console.log('Data sent.');
 });
 
 app.get(constants.PRODUCT_SLIDER_IMAGES, (req, res) => {
-    console.log(req.query.id+"++++++++++++++++++++++++++++++++++++++++++++++");
     id = req.query.id;
     fp = "./public/uploads/slider/"+id;
     res.sendFile(fp, { root: __dirname });
 })
 
 app.get(constants.PRODUCT_ADVERT_IMAGES, (req, res) => {
-    console.log(req.query.id+"++++++++++++++++++++++++++++++++++++++++++++++");
     id = req.query.id;
     fp = ADD_IMAGES_DIR+"/"+id;
     res.sendFile(fp, { root: __dirname });
@@ -523,6 +517,5 @@ app.get(constants.HOT_OR_NOT, (req, res)=>{
     Products.find({hotOrNot: 'yes'})
     .then((prod)=>{
         res.send(prod);
-        console.log('Data sent.');
     })
 });
