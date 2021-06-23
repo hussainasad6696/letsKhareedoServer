@@ -200,6 +200,8 @@ var transporter = nodemailer.createTransport({
             product.kids = data.kids[i];
             product.hotOrNot = data.hotOrNot[i];
             product.name = data.name[i];
+            product.chest = data.chest[i];
+            product.shoulder = data.shoulder[i];
             var products = Products(product);
             console.log(products);
             products.save(products).then(item =>{

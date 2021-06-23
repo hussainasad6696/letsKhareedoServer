@@ -26,6 +26,12 @@ const ProductsSchema = new Schema({
     type: {
         type: String,
     },
+    chest: {
+        type: String,
+    },
+    shoulder: {
+        type: String,
+    },
     size: {
         type: String,
     },
