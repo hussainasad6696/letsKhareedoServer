@@ -1,0 +1,5 @@
+{
+  orderData: '[{"imageUrl":"9th-removebg-preview.png","name":"zara sky blue","description":"branded","price":"1200","numberOfItems":1,"type":"Large","chest":"40","shoulder":"30","waist":null},{"imageUrl":"9th-removebg-preview.png","name":"zara sky blue","description":"branded","price":"1200","numberOfItems":1,"type":"Mediam","chest":"20","shoulder":"40","waist":null},{"imageUrl":"9th-removebg-preview.png","name":"zara sky blue","description":"branded","price":"1200","numberOfItems":1,"type":"Mediam","chest":"20","shoulder":"40","waist":null},{"imageUrl":"9th-removebg-preview.png","name":"zara 
+sky blue","description":"branded","price":"1200","numberOfItems":1,"type":"Small","chest":"19","shoulder":"17","waist":null},{"imageUrl":"denim.png","name":"denim jeans shorts","description":"new branded","price":"1233","numberOfItems":1,"type":"","chest":"","shoulder":"","waist":"33"}]',
+  deviceId: 'd3fcf7a7-3b79-48c1-935c-74597e48c745'
+}

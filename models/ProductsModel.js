@@ -32,6 +32,9 @@ const ProductsSchema = new Schema({
     shoulder: {
         type: String,
     },
+    waist: {
+        type: String,
+    },
     size: {
         type: String,
     },

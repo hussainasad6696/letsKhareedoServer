@@ -2,12 +2,12 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ParternsDetailSchema = new Schema({
-    partnerName_first: {
+    partnerName: {
         type: String
     },
-    partnerName_last: {
-        type: String
-    },
+    // partnerName_last: {
+    //     type: String
+    // },
     latestInvestment:{
         type: String
     },

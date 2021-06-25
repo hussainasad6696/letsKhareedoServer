@@ -3,6 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const express = require('express');
 const mongoose = require('mongoose');
+const multiparty = require('multiparty');
 global.constants = require('./constants');
 const path = require("path");
 const multer = require('multer');
@@ -30,20 +31,17 @@ mongoose.connect('mongodb://localhost:27017/RestApi_letsKhareedo', {
     useFindAndModify: false
 }).then((message) => {
     console.log('mongodb connected');
-    //console.log(message.isConnected);
 });
 
 
 app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({
-  extended: true
-}));
-var bodyParser = require('body-parser');
+app.use(express.urlencoded({extended: true}));
+//app.use(express.bodyParser());
 app.use(express.static(__dirname + '/views'));
 app.set('view engine', 'ejs');
 
 var transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: 'Gmail',
     auth: {
       user: 'letskhareedo@gmail.com',
       pass: 'yourpassword'
@@ -70,7 +68,6 @@ var transporter = nodemailer.createTransport({
         res.send(requestCheck);
     });
     
-    var userName;
 
     app.get(constants.PARTNERS_FOR_DATAPAGE, (req, res) => {
         var firstName;
@@ -202,6 +199,7 @@ var transporter = nodemailer.createTransport({
             product.name = data.name[i];
             product.chest = data.chest[i];
             product.shoulder = data.shoulder[i];
+            product.waist = data.waist[i];
             var products = Products(product);
             console.log(products);
             products.save(products).then(item =>{
@@ -222,14 +220,12 @@ var transporter = nodemailer.createTransport({
         fs.mkdir(SLIDER_DIR, {recursive: true}, function(err){
             if(err){
                 console.log(err);
-            }else {
-                console.log("New directory created");
             }
         });
         fs.mkdir(ADD_IMAGES_DIR , { recursive : true}, function(err){
             if(err){
                 console.log(err);
-            }else console.log("Add Images Dir Created");
+            }
         })
     }
     makeDirectory();
@@ -322,8 +318,8 @@ app.get(constants.ADMIN_LOGIN, (req,res)=>{
 })
 
 app.get(constants.VERIFICATION, (req, res)=>{
-    email = req.email;
-    password = req.password;
+    email = req.query.email;
+    password = req.query.password;
     PartnersDetail.findOne({email: req.email})
      .then(partner => {
         if (partner){
@@ -339,7 +335,7 @@ app.get(constants.VERIFICATION, (req, res)=>{
               };
               transporter.sendMail(mailOptions, function(error, info){
                 if (error) {
-                  console.log(error);
+                  console.log(error+"hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
                 } else {
                     PartnersDetail.findByIdAndUpdate({_id: partner._id}, {verifKey: seq})
                     .then(()=>{
@@ -347,7 +343,8 @@ app.get(constants.VERIFICATION, (req, res)=>{
                     })
                 }
               });
-              res.render(constants.VERIF_KEY+email);
+              console.log(email);
+              res.render('/verif-key/'+email);
            }
            else{
                console.log('Invalid password');
@@ -374,29 +371,43 @@ app.get(constants.ADD_CUSTOMER, (req, res)=>{
 // adding app using clients to db and checking their uniqueness
 app.post(constants.ADD_CUSTOMER, (req, res)=>{
     console.log(req.body+ ": a new user is added to db");
-    Client.findOne({phoneNumber: req.body.phoneNumber}, function(err,partners){
+    let form = new multiparty.Form();
+    Client.findOne({phoneNumber: req.body.phoneNumber}, (err,clients)=>{
         if(err) {console.log(err + ": error while checking if client already exists or not");}
-        if(partners){
+        if(clients){
             res.status(500).send("User already exists");
-        }else {
+        }
+        else {
             var client = Client(req.body);
-                client.save().then(function(response){
-            console.log(response+": add user response======================================");
-            res.status(200).send('Saved');
-            }).catch(function(err){
+                client.save().then((response)=>{
+                    console.log('Customer added to database'+response);
+            res.status(200).send('Customer saved.');
+            }).catch((err)=>{
                 console.log(err+": add user error =========================================");
-    });
+            });
         }
     });
-    
 });
 
-app.get(constants.ADD_PARTNER, (req, res)=>{
+app.get(constants.ADD_PARTNER, (req, res)=>{       //testing done
     res.render('addPartner');
 });
 
-app.post(constants.ADD_PARTNER, (req, res)=>{
-    
+app.post(constants.ADD_PARTNER, (req, res)=>{       //testing done
+    console.log('Adding partner: '+req.body);
+    let form = new multiparty.Form();
+    PartnersDetail.findOne({email: req.body.email}, (err, partners)=>{
+        if(partners){
+            res.send('Partner already exists.');
+        }
+        else{
+            PartnersDetail.create(req.body).then((partner)=>{
+                console.log('Partner added to database: '+partner);
+                res.status(200).send('Parner added to database.');
+            })
+        }
+    })
+
 });
 
 app.post(constants.VERIF_KEY_MAIL, (req, res)=>{
@@ -412,6 +423,10 @@ app.post(constants.VERIF_KEY_MAIL, (req, res)=>{
         }
     })
 });
+
+app.get(constants.USER_LOGIN, (req, res)=>{
+    res.render('userLogin');
+})
 
 app.post(constants.USER_LOGIN, (req, res) => {
     Client.findOne({email: req.body.email}).then((client)=>{
@@ -434,23 +449,24 @@ app.post(constants.USER_LOGIN, (req, res) => {
 });
 
 app.post(constants.NEW_ORDER, (req, res)=>{
-    client = req.uid;
-    orderData = req.order;
-    Client.findByIdAndUpdate({_id: mongoose.Types.ObjectId(client)}, 
-    {$addToSet: {orderList: JSON.stringify(orderData)}},  
-    {safe: true, upsert: true, new: true}, (err, result)=>{
-        if (err){
-            console.log(err);
-        }
-        else{
-            console.log('Order added: '+ result);
-            products = orderData.products;
-            products.forEach(product =>{
-                Products.findByIdAndUpdate({_id: mongoose.Types.ObjectId(product.productID)},
-                {$inc: {quantity: -1, pending: 1}});
-            });
-            res.status(200).send('Order has been placed.');
-        }});
+    // client = req.uid;
+    // orderData = req.order;
+    // Client.findByIdAndUpdate({_id: mongoose.Types.ObjectId(client)}, 
+    // {$addToSet: {orderList: JSON.stringify(orderData)}},  
+    // {safe: true, upsert: true, new: true}, (err, result)=>{
+    //     if (err){
+    //         console.log(err);
+    //     }
+    //     else{
+    //         console.log('Order added: '+ result);
+    //         products = orderData.products;
+    //         products.forEach(product =>{
+    //             Products.findByIdAndUpdate({_id: mongoose.Types.ObjectId(product.productID)},
+    //             {$inc: {quantity: -1, pending: 1}});
+    //         });
+    //         res.status(200).send('Order has been placed.');
+    //     }});
+    console.log(req.body);
 });
 
 app.get(constants.MALE_PRODUCTS, (req, res)=>{
