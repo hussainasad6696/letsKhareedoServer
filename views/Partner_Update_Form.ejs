@@ -1053,7 +1053,7 @@ li[data-type="control_image"] .form-input-wide div img {
 .form-label.form-label-auto {
         
         display: inline-block;
-        float: left;
+        /* float: left; */
         text-align: left;
       
       }
@@ -1089,7 +1089,7 @@ JotForm.paymentExtrasOnTheFly([null,null,{"name":"submitForm","qid":"2","text":"
 </script>
 </head>
 <body>
-<form class="jotform-form" action="/partnersForDataPage" method="post" name="form_211043641628449" id="211043641628449" accept-charset="utf-8" autocomplete="on">
+<form class="jotform-form" action="/updateUser/<%=userName%>" method="post" name="form_211043641628449" id="211043641628449" accept-charset="utf-8" autocomplete="on">
   <input type="hidden" name="formID" value="211043641628449" />
   <input type="hidden" id="JWTContainer" value="" />
   <input type="hidden" id="cardinalOrderNumber" value="" />
@@ -1114,13 +1114,11 @@ JotForm.paymentExtrasOnTheFly([null,null,{"name":"submitForm","qid":"2","text":"
         <div id="cid_16" class="form-input jf-required" data-layout="full">
           <div data-wrapper-react="true">
             <span class="form-sub-label-container" style="vertical-align:top" data-input-type="first">
-              <input type="text" id="first_16" name="partnerName_first" class="form-textbox validate[required]" size="10" value="" data-component="first" aria-labelledby="label_16 sublabel_16_first" required="" />
+              <input type="text" id="userName" name="userName" class="form-textbox validate[required]" size="10" value=<%= userName%> data-component="first" aria-labelledby="label_16 sublabel_16_first" required="" />
               <label class="form-sub-label" for="first_16" id="sublabel_16_first" style="min-height:13px" aria-hidden="false"> First Name </label>
             </span>
             <span class="form-sub-label-container" style="vertical-align:top" data-input-type="last">
-              <input type="text" id="last_16" name="partnerName_last" class="form-textbox validate[required]" size="15" value="" data-component="last" aria-labelledby="label_16 sublabel_16_last" required="" />
-              <label class="form-sub-label" for="last_16" id="sublabel_16_last" style="min-height:13px" aria-hidden="false"> Last Name </label>
-            </span>
+              </span>
           </div>
         </div>
       </li>
@@ -1133,7 +1131,7 @@ JotForm.paymentExtrasOnTheFly([null,null,{"name":"submitForm","qid":"2","text":"
         </label>
         <div id="cid_104" class="form-input jf-required" data-layout="half">
           <span class="form-sub-label-container" style="vertical-align:top">
-            <input type="number" id="input_104" name="latestInvestment" data-type="input-number" class=" form-number-input form-textbox validate[required]" style="width:310px" size="310" value="" placeholder="00" data-component="number" aria-labelledby="label_104 sublabel_input_104" required="" step="any" />
+            <input type="number" id="latestInvestment" name="latestInvestment" data-type="input-number" class=" form-number-input form-textbox validate[required]" style="width:310px" size="310" value="" placeholder="00" data-component="number" aria-labelledby="label_104 sublabel_input_104" required="" step="any" />
             <label class="form-sub-label" for="input_104" id="sublabel_input_104" style="min-height:13px" aria-hidden="false"> Amount added as latest investment </label>
           </span>
         </div>
@@ -1174,13 +1172,13 @@ JotForm.paymentExtrasOnTheFly([null,null,{"name":"submitForm","qid":"2","text":"
             <span class="allowTime-container timeAMPM">
               <div data-wrapper-react="true">
                 <span class="form-sub-label-container hasAMPM" style="vertical-align:top">
-                  <input type="text" class="currentTime time-dropdown form-textbox validate[required]" id="input_22_timeInput" name="investmentDate_timeInput" required="" placeholder="HH : MM" aria-labelledby="label_22 sublabel_22_hour" data-mask="hh:MM" value="01:30" data-version="v2" />
+                  <input type="text" class="currentTime time-dropdown form-textbox validate[required]" id="investmentDate_timeInput" name="investmentDate_timeInput" required="" placeholder="HH : MM" aria-labelledby="label_22 sublabel_22_hour" data-mask="hh:MM" value="01:30" data-version="v2" />
                   <input type="hidden" id="input_22_hourSelect" name="investmentDate_hour" value="01" />
                   <input type="hidden" id="input_22_minuteSelect" name="investmentDate_min" value="30" />
                   <label data-seperate-translate="true" class="form-sub-label" for="input_22_timeInput" style="min-height:13px" aria-hidden="false"> Hour Minutes </label>
                 </span>
                 <span class="form-sub-label-container" style="vertical-align:top">
-                  <select class="time-dropdown form-dropdown validate[required]" id="input_22_ampm" name="investmentDate_ampm" data-component="time-ampm" required="" aria-labelledby="label_22 sublabel_22_ampm">
+                  <select class="time-dropdown form-dropdown validate[required]" id="investmentDate_ampm" name="investmentDate_ampm" data-component="time-ampm" required="" aria-labelledby="label_22 sublabel_22_ampm">
                     <option value="AM"> AM </option>
                     <option selected="" value="PM"> PM </option>
                   </select>
@@ -1194,7 +1192,7 @@ JotForm.paymentExtrasOnTheFly([null,null,{"name":"submitForm","qid":"2","text":"
       <li class="form-line" data-type="control_button" id="id_2">
         <div id="cid_2" class="form-input-wide" data-layout="full">
           <div data-align="center" class="form-buttons-wrapper form-buttons-center   jsTest-button-wrapperField">
-            <button id="input_2" type="submit" class="form-submit-button submit-button jf-form-buttons jsTest-submitField" data-component="button" data-content="">
+            <button id="input_2" type="submit" name="actualUsername" class="form-submit-button submit-button jf-form-buttons jsTest-submitField" value="<%= userName%>" data-component="button" data-content="">
               Submit
             </button>
           </div>

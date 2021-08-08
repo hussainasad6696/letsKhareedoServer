@@ -44,11 +44,11 @@
             </a>
           </div>
           <div class="u-custom-menu u-nav-container">
-            <ul class="u-nav u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="index.html" style="padding: 10px 10px;">Home</a>
+            <ul class="u-nav u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="index" style="padding: 10px 10px;">Home</a>
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="Stock-Detail.html" style="padding: 10px 10px;">Stock Detail</a>
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="Artical-form.html" style="padding: 10px 10px;">Artical Form</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="Artical-form.html" style="padding: 10px 10px;">Order List</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" style="padding: 10px 10px;">Stock Entry</a>
+</li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="OrderList" style="padding: 10px 10px;">Order List</a>
+</li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="DataBaseEntryFormPage" style="padding: 10px 10px;">Stock Entry</a>
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" style="padding: 10px 10px;">Logout</a>
 </li></ul>
           </div>
@@ -56,12 +56,12 @@
             <div class="u-black u-container-style u-inner-container-layout u-opacity u-opacity-95 u-sidenav">
               <div class="u-sidenav-overflow">
                 <div class="u-menu-close"></div>
-                <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2"><li class="u-nav-item"><a class="u-button-style u-nav-link" href="index.html" style="padding: 10px 20px;">Home</a>
+                <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2"><li class="u-nav-item"><a class="u-button-style u-nav-link" href="index" style="padding: 10px 20px;">Home</a>
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="Stock-Detail.html" style="padding: 10px 10px;">Stock Detail</a>
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="Sales-Sheet.html" style="padding: 10px 10px;">Sales Detail</a>
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="Artical-form.html" style="padding: 10px 10px;">Artical Form</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="Artical-form.html" style="padding: 10px 10px;">Order List</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link" style="padding: 10px 10px;">Stock Entry</a>
+</li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="OrderList" style="padding: 10px 10px;">Order List</a>
+</li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="DataBaseEntryFormPage" style="padding: 10px 10px;">Stock Entry</a>
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link" style="padding: 10px 10px;">Logout</a>
 </li></ul>
               </div>
@@ -89,16 +89,17 @@
               </tr>
             </thead>
             <tbody class="u-table-body">
-              <% for (var i = 0; i < partner.length; i++) { %>
+              <% for (var i = 0; i < partners.length; i++) { %>
               <tr style="height: 75px;">
-                <td id="partnerName_first" type="text" name="partnerName_first" class="u-border-1 u-border-grey-30 u-table-cell"><%= partner[i].partnerName_first %>
-                  <%= partner[i].partnerName_last %></td>
-                <td id="investment" name="investment" type="text" class="u-border-1 u-border-grey-30 u-table-cell"><%= partner[i].latestInvestment %></td>
-                <td id="date" name="date" type="text" class="u-border-1 u-border-grey-30 u-table-cell">Date: <%= partner[i].date %> Time: 
-                  <%= partner[i].investmentDate_timeInput%>
-                  <%= partner[i].investmentDate_ampm%></td>
+                <td id="partnerName" type="text" name="partnerName" class="u-border-1 u-border-grey-30 u-table-cell"><%= partners[i].partnerName %></td>
+                <td id="investment" name="investment" type="text" class="u-border-1 u-border-grey-30 u-table-cell"><%= partners[i].investment %></td>
+                <td id="date" name="date" type="text" class="u-border-1 u-border-grey-30 u-table-cell">Date: <%= partners[i].date %> Time: 
+                  <%= partners[i].investmentDate_timeInput%>
+                  <%= partners[i].investmentDate_ampm%></td>
                 <td class="u-border-1 u-border-grey-30 u-table-cell">
-                  <button type="button" onclick="sendUserInfo()" name="submit" id="updateData">Update</button></td>
+                  <a href="/updateUser/<%= partners[i].partnerName %>">Update</a>
+                  <!-- <button type="button" onclick="/partnersForDataPage" name="submit" id="updateData">Update</button></td> -->
+                  <!-- onclick="sendUpdateInfo()" -->
               </tr>
               <% } %>
             </tbody>
@@ -122,7 +123,7 @@
             </colgroup>
             <thead class="u-palette-4-base u-table-header u-table-header-1">
               <tr style="height: 43px;">
-                <th class="u-border-1 u-border-palette-4-base u-table-cell">UUID</th>
+                <th class="u-border-1 u-border-palette-4-base u-table-cell">Product Id</th>
                 <th class="u-border-1 u-border-palette-4-base u-table-cell">Artical type</th>
                 <th class="u-border-1 u-border-palette-4-base u-table-cell">Amount</th>
                 <th class="u-border-1 u-border-palette-4-base u-table-cell">Artical detail</th>
@@ -132,15 +133,17 @@
               </tr>
             </thead>
             <tbody class="u-table-body">
+              <% for (var i = 0; i < allproducts.length; i++) { %>
               <tr style="height: 75px;">
-                <td class="u-border-1 u-border-grey-30 u-first-column u-grey-5 u-table-cell u-table-cell-8">Row 1</td>
-                <td class="u-border-1 u-border-grey-30 u-table-cell">Description</td>
-                <td class="u-border-1 u-border-grey-30 u-table-cell">Description</td>
-                <td class="u-border-1 u-border-grey-30 u-table-cell">Description</td>
+                <td class="u-border-1 u-border-grey-30 u-first-column u-grey-5 u-table-cell u-table-cell-8"><%= allproducts[i]._id %></td>
+                <td class="u-border-1 u-border-grey-30 u-table-cell"><%= allproducts[i].type %></td>
+                <td class="u-border-1 u-border-grey-30 u-table-cell"><%= allproducts[i].quantity %> </td>
+                <td class="u-border-1 u-border-grey-30 u-table-cell"><%= allproducts[i].size %></td>
                 <td class="u-border-1 u-border-grey-30 u-table-cell"></td>
                 <td class="u-border-1 u-border-grey-30 u-table-cell"></td>
                 <td class="u-border-1 u-border-grey-30 u-table-cell"></td>
               </tr>
+              <% } %>
             </tbody>
           </table>
         </div>
@@ -163,8 +166,8 @@
             </colgroup>
             <thead class="u-black u-table-header u-table-header-1">
               <tr style="height: 21px;">
-                <th class="u-border-1 u-border-black u-table-cell">UUID</th>
-                <th class="u-border-1 u-border-black u-table-cell">Artical type</th>
+                <th class="u-border-1 u-border-black u-table-cell">Product Id</th>
+                <th class="u-border-1 u-border-black u-table-cell">Name</th>
                 <th class="u-border-1 u-border-black u-table-cell">Amount</th>
                 <th class="u-border-1 u-border-black u-table-cell">Artical detail<br>
                 </th>
@@ -174,15 +177,17 @@
               </tr>
             </thead>
             <tbody class="u-grey-70 u-table-body u-table-body-1">
+              <% for (var i = 0; i < soldproducts.length; i++) { %>
               <tr style="height: 75px;">
-                <td class="u-border-1 u-border-grey-50 u-table-cell">Row 1</td>
-                <td class="u-border-1 u-border-grey-50 u-table-cell">Description</td>
-                <td class="u-border-1 u-border-grey-50 u-table-cell">Description</td>
+                <td class="u-border-1 u-border-grey-50 u-table-cell"><%= soldproducts[i].pid %></td>
+                <td class="u-border-1 u-border-grey-50 u-table-cell"><%= soldproducts[i].name %></td>
+                <td class="u-border-1 u-border-grey-50 u-table-cell"><%= soldproducts[i].quantity %></td>
                 <td class="u-border-1 u-border-grey-50 u-table-cell"></td>
-                <td class="u-border-1 u-border-grey-50 u-table-cell">Description</td>
+                <td class="u-border-1 u-border-grey-50 u-table-cell"><%= soldproducts[i].investment %></td>
                 <td class="u-border-1 u-border-grey-50 u-table-cell"></td>
                 <td class="u-border-1 u-border-grey-50 u-table-cell"></td>
               </tr>
+              <% } %>
             </tbody>
           </table>
         </div>
@@ -205,30 +210,35 @@
         <span>Website Builder Software</span>
       </a>. 
     </section>
-    <script type="text/javascript">
   
-  function sendUserInfo(){
-    var userFirstName = document.getElementById("partnerName_first").innerHTML;
-    var investment = document.getElementById("investment").innerHTML;
-    var date = document.getElementById("date").innerHTML;
-    var data = {};
-    data.userFirstName = userFirstName;
-    data.investment = investment;
-    data.date = date;
-    console.log(userFirstName +" "+investment+" "+date);
-    console.log(data);
-    $.ajax({
-      type: "post",
-      url: '/updateUser',
+  
+  <script>
+  
+    function sendUpdateInfo(){
+      var userName = document.getElementById("partnerName").innerHTML;
+      var date = document.getElementById("date").innerHTML;
+      var data = {};
+      $.ajax({
+      type: "get",
+      url: '/partnersForDataPage',
       contentType: "application/json; charset=UTF-8",
-      data: JSON.stringify(data),
+      data: JSON.stringify(userName),
       success: function(data){
-        alert("Success");
         data = JSON.parse(data);
-     console.dir(data);
+        console.dir(data);
       }
     });
-  }
+    }
+
+$(document).ready(function(){
+  $("button").click(function(){
+    $.get("updateUser", function(data, status){
+      alert("Data: " + data + "\nStatus: " + status);
+    });
+  });
+});
+    
+
   // document.getElementById("updateData").onclick = function() { 
   //   var name = document.getElementById("partnerName_first").value;
   //     console.log(name);

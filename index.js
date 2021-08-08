@@ -3,6 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const express = require('express');
 const mongoose = require('mongoose');
+const alert = require('alert');
 const multiparty = require('multiparty');
 global.constants = require('./constants');
 const path = require("path");
@@ -12,6 +13,7 @@ var PartnersDetail = require('./models/PartnersModel');
 var Products = require('./models/ProductsModel');
 var Client = require('./models/ClientModel');
 var SoldProducts = require('./models/SoldProductsModel');
+var Orders = require('./models/OrderModel');
 var UserData = require('./models/UserDataModel');
 const DIR = './public/uploads';
 const SLIDER_DIR = DIR + '/slider';
@@ -43,8 +45,8 @@ app.set('view engine', 'ejs');
 var transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-      user: 'letskhareedo@gmail.com',
-      pass: 'yourpassword'
+      user: 'zeeniaather96@gmail.com',
+      pass: 'B4biryani'
     }
 });
 
@@ -70,10 +72,9 @@ var transporter = nodemailer.createTransport({
     
 
     app.get(constants.PARTNERS_FOR_DATAPAGE, (req, res) => {
-        var firstName;
-        var lastName;
-        //console.log(userName+"====================="+ req.body);
-        res.render('Partner_Update_Form');
+        console.log(req);
+        userName = req.query.userName;
+        res.render('Partner_Update_Form', {userName: userName});
         // PartnersDetail.findOne({partnerName_first: userName}, 
         //     function(err,partners) {
         //         console.log("getMethod of partnersForDataPage: "+ partners);
@@ -136,26 +137,32 @@ var transporter = nodemailer.createTransport({
         console.log(req.body.partnerName_first+" "+req.body.partnerName_last);
     });
 
+
+    app.get(constants.UPDATE_USER, async (req, res) =>{
+        console.log(req.params.email);
+        userName = req.params.email;
+        res.render('Partner_Update_Form.ejs', {userName: userName});
+    })
+
     app.post(constants.UPDATE_USER, (req, res) => {
-        console.log("updateUser here");
-        console.log("updateUser: ============="+JSON.stringify(req.body));
+        let form = new multiparty.Form();
+        console.log(req.body);
+        const update = { partnerName: req.body.userName, latestInvestment: req.body.latestInvestment, date: req.body.date, investmentDate_timeInput: req.body.investmentDate_timeInput, investmentDate_ampm: req.body.investmentDate_ampm };
+        PartnersDetail.findOneAndUpdate({partnerName: req.params.email}, update).then((result) => {
+            PartnersDetail.findByIdAndUpdate(result._id, {$inc : {investment : parseInt(req.body.latestInvestment)}}).then((fin)=>{
+                console.log('Updates partner: '+fin);
+                res.status(200).send('Partner updated successfully.');
+            })
+        })
     });
 
-    app.get(constants.DASHBOARD, (req, res) => {
-        // email = req.params.email;
-        // key = req.verifKey;
-        // PartnersDetail.findOne({email: email})
-        // .then((partner)=>{
-        //     if(partner.verifKey === key){
-                PartnersDetail.find({}, function (err,partners) {
-                    console.log(partners+": data is here");
-                    res.render('index', {person: "Mian Hussain", partner: partners});
-                });
-        //    }
-        //     else{
+    
 
-        //     }
-        // })
+    app.get(constants.DASHBOARD, (req, res) => {
+        PartnersDetail.find({}, function (err,partners) {
+            console.log(partners+": data is here");
+            res.render('index', {person: "Mian Hussain", partner: partners});
+        });
     });
 
     
@@ -305,6 +312,24 @@ var transporter = nodemailer.createTransport({
 
 // zeenia's code
 
+app.get('/index', (req, res) => {
+    //res.render('index', {person: 'test', partners: ['a', 'b']});
+    PartnersDetail.findOne({email: req.body.Submit})
+    .then((partner)=>{
+        console.log(partner.verifKey);
+        console.log(req.body.key);
+        if(partner.verifKey === req.body.key){
+            PartnersDetail.find({}, function (err,partners) {
+                console.log(partners+": data is here");
+                SoldProducts.find({}).then((sprods)=>{
+                    Products.find({}).then((products)=>{
+                        res.render('index', {person: partner.partnerName, partners: partners, soldproducts: sprods, allproducts: products});
+                    })
+                })
+            });
+        }
+})
+});
 
  app.get(constants.SALES_SHEET, (req, res) => {
      SoldProducts.find({}, (err, products)=>{
@@ -317,19 +342,19 @@ app.get(constants.ADMIN_LOGIN, (req,res)=>{
     res.render('adminLogin');
 })
 
-app.get(constants.VERIFICATION, (req, res)=>{
+app.get(constants.VERIFICATION, (req, res)=>{   // testing done
     email = req.query.email;
     password = req.query.password;
-    PartnersDetail.findOne({email: req.email})
+    PartnersDetail.findOne({email: req.query.email})
      .then(partner => {
         if (partner){
-           if (partner.password  === req.password)
+           if (partner.password  === req.query.password)
            {
               console.log('User logged in.');
               var seq = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
               var mailOptions = {
-                from: 'letskhareedo@gmail.com',
-                to: req.email,
+                from: 'zeeniaather96@gmail.com',
+                to: req.query.email,
                 subject: 'Verification Key',
                 text: `Your verification key is ${seq}.`
               };
@@ -344,7 +369,7 @@ app.get(constants.VERIFICATION, (req, res)=>{
                 }
               });
               console.log(email);
-              res.render('/verif-key/'+email);
+              res.render('verif-key', { email : req.query.email }); //here
            }
            else{
                console.log('Invalid password');
@@ -358,10 +383,10 @@ app.get(constants.VERIFICATION, (req, res)=>{
 })
 });
 
-app.get(constants.VERIF_KEY_MAIL, (req, res)=>{
-    console.log(req.params.email);
-    res.render(constants.VERIF_KEY, { 'email' : req.params.email });
-});
+// app.get(constants.VERIF_KEY_MAIL, (req, res)=>{
+//     console.log(req.params.email);
+//     res.render(constants.VERIF_KEY, { 'email' : req.params.email });
+// });
 
 app.get(constants.ADD_CUSTOMER, (req, res)=>{
     res.render('addClient');
@@ -381,8 +406,27 @@ app.post(constants.ADD_CUSTOMER, (req, res)=>{
             var client = Client(req.body);
                 client.save().then((response)=>{
                     console.log('Customer added to database'+response);
-            res.status(200).send('Customer saved.');
-            }).catch((err)=>{
+                    Client.findByIdAndUpdate({_id:client._id}, {verificationStatus: 'non-verified'});
+                    res.status(200).send('Customer saved.');
+                    var seq = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
+              var mailOptions = {
+                from: 'zeeniaather96@gmail.com',
+                to: client.email,
+                subject: 'Verification Key',
+                text: `Your verification key is ${seq}.`
+              };
+              transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                  console.log(error+"hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+                } else {
+                    Client.findByIdAndUpdate({_id: client._id}, {verificationCode: seq})
+                    .then(()=>{
+                        console.log('Verification email sent to client '+info);
+                    })
+                }
+              });
+              res.render('verif-key', { email : client.email });
+                }).catch((err)=>{
                 console.log(err+": add user error =========================================");
             });
         }
@@ -407,15 +451,23 @@ app.post(constants.ADD_PARTNER, (req, res)=>{       //testing done
             })
         }
     })
-
 });
 
-app.post(constants.VERIF_KEY_MAIL, (req, res)=>{
-    email =  req.params.email;
-    PartnersDetail.findOne({email: req.email})
+app.post(constants.VERIF_KEY, (req, res)=>{    // testing done
+    console.log(req.body);
+    PartnersDetail.findOne({email: req.body.Submit})
     .then((partner)=>{
-        if(partner.verifKey === req.key){
-            res.render('/dashboard');
+        console.log(partner.verifKey);
+        console.log(req.body.key);
+        if(partner.verifKey === req.body.key){
+            PartnersDetail.find({}, function (err,partners) {
+                console.log(partners+": data is here");
+                SoldProducts.find({}).then((sprods)=>{
+                    Products.find({}).then((products)=>{
+                        res.render('index', {person: partner.partnerName, partners: partners, soldproducts: sprods, allproducts: products});
+                    })
+                })
+            });
         }
         else{
             alert('Wrong key entered. Try again.');
@@ -426,7 +478,7 @@ app.post(constants.VERIF_KEY_MAIL, (req, res)=>{
 
 app.get(constants.USER_LOGIN, (req, res)=>{
     res.render('userLogin');
-})
+});
 
 app.post(constants.USER_LOGIN, (req, res) => {
     Client.findOne({email: req.body.email}).then((client)=>{
@@ -449,24 +501,28 @@ app.post(constants.USER_LOGIN, (req, res) => {
 });
 
 app.post(constants.NEW_ORDER, (req, res)=>{
-    // client = req.uid;
-    // orderData = req.order;
-    // Client.findByIdAndUpdate({_id: mongoose.Types.ObjectId(client)}, 
-    // {$addToSet: {orderList: JSON.stringify(orderData)}},  
-    // {safe: true, upsert: true, new: true}, (err, result)=>{
-    //     if (err){
-    //         console.log(err);
-    //     }
-    //     else{
-    //         console.log('Order added: '+ result);
-    //         products = orderData.products;
-    //         products.forEach(product =>{
-    //             Products.findByIdAndUpdate({_id: mongoose.Types.ObjectId(product.productID)},
-    //             {$inc: {quantity: -1, pending: 1}});
-    //         });
-    //         res.status(200).send('Order has been placed.');
-    //     }});
     console.log(req.body);
+    client = req.body.uid;
+    orderData = req.body.order;
+    Client.findByIdAndUpdate({_id: mongoose.Types.ObjectId(client)}, 
+    {$addToSet: {orderList: JSON.stringify(orderData)}},  
+    {safe: true, upsert: true, new: true}, (err, result)=>{
+        if (err){
+            console.log(err);
+        }
+        else{
+            console.log('Order added: '+ result);
+            products = orderData.products;
+            const update = {customerID: result._id, customerName: result.name};
+            Orders.create(orderData).then((order)=>{
+                Orders.findByIdAndUpdate({_id: order._id}, update);
+            })
+            products.forEach(product =>{
+                Products.findByIdAndUpdate({_id: mongoose.Types.ObjectId(product.productID)},
+                {$inc: {quantity: -1, pending: 1}});
+            });
+            res.status(200).send('Order has been placed.');
+        }});
 });
 
 app.get(constants.MALE_PRODUCTS, (req, res)=>{
@@ -496,6 +552,20 @@ app.get(constants.FEMALE_KIDS_PRODUCTS, (req, res)=>{
         res.send(prod);
     })
 });
+
+app.post(constants.SOLD_PRODUCTS, (req, res)=>{
+    console.log(req.body);
+    SoldProducts.create(req.body).then((prod)=>{
+        console.log('Product added to sold database: '+prod);
+    })
+})
+
+app.post(constants.ADD_PRODUCTS, (req, res)=>{
+    console.log(req.body);
+    Products.create(req.body).then((prod)=>{
+        console.log('Product added to database: '+prod);
+    })
+})
 
 app.get(constants.ACCESSORIES_PRODUCTS, (req, res)=>{
     Products.find({type: 'accessories'})
@@ -537,3 +607,33 @@ app.get(constants.HOT_OR_NOT, (req, res)=>{
         res.send(prod);
     })
 });
+
+app.get('/test', (req, res)=>{
+    var mailOptions = {
+        from: 'zeeniaather96@gmail.com',
+        to: 'mianhussainasad@gmail.com',
+        subject: 'Verification Key',
+        text: 'Your verification key is 1234.'
+      };
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+            console.log('Email sent to admin '+info);
+        }
+      });
+})
+
+app.get(constants.ORDER_LIST, (req, res)=>{
+    Orders.find({}).then((orders)=>{
+        res.render('OrderList', {userName: 'zinnia', partners:['a', 'b']});
+    })
+})
+
+app.get(constants.STOCK_ENTRY, (req, res)=>{
+    res.render('DataBaseEntryFormPage');
+})
+
+app.get('/dataEntry', (req, res)=>{
+    res.render('DataBaseEntryFormPage.ejs');
+})

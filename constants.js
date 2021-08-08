@@ -1,10 +1,9 @@
  const SALES_SHEET = '/salesSheet';
  const ADMIN_LOGIN = "/adminLogin";
  const VERIFICATION = '/verification';
- const VERIF_KEY = '/verif-key';
  const ADD_CUSTOMER = '/addCustomer';
  const ADD_PARTNER = '/addPartner';
- const VERIF_KEY_MAIL = '/verif-key/:email';
+ const VERIF_KEY = '/verif-key';
  const USER_LOGIN = '/userLogin';
  const NEW_ORDER = '/newOrder';
  const MALE_PRODUCTS = '/products/male';
@@ -18,7 +17,7 @@
  const PRODUCT_ADVERT_IMAGES = '/products/advertImages';
  const HOT_OR_NOT = '/products/hotOrNot';
  const PARTNERS_FOR_DATAPAGE = '/partnersForDataPage';
- const UPDATE_USER = '/updateUser';
+ const UPDATE_USER = '/updateUser/:email';
  const DASHBOARD = '/dashboard';
  const DATABASE_ENTRY_FORM = '/databaseEntryForm';
  const ADVERTISEMENT = '/databaseEntryForm/advertisement';
@@ -26,7 +25,10 @@
  const ADVERTISEMENT_SLIDER_IMAGE = '/databaseEntryForm/save-slider-image';
  const SAVE_ADVERT_IMAGE = '/databaseEntryForm/save-addvertisment-image';
  const SLIDER_IMAGE = '/databaseEntryForm/slider-images';
-
+ const ORDER_LIST = '/orderList';
+ const SOLD_PRODUCTS = '/soldProducts';
+ const ADD_PRODUCTS = '/addProduct';
+ const STOCK_ENTRY = '/DataBaseEntryFormPage';
 
  module.exports = {
      SALES_SHEET: SALES_SHEET,
@@ -35,7 +37,6 @@
      VERIF_KEY: VERIF_KEY,
      ADD_CUSTOMER: ADD_CUSTOMER,
      ADD_PARTNER: ADD_PARTNER,
-     VERIF_KEY_MAIL: VERIF_KEY_MAIL,
      USER_LOGIN: USER_LOGIN,
      NEW_ORDER: NEW_ORDER,
      MALE_PRODUCTS: MALE_PRODUCTS,
@@ -56,5 +57,9 @@
      ADVERTISEMENT_IMAGE: ADVERTISEMENT_IMAGE,
      ADVERTISEMENT_SLIDER_IMAGE: ADVERTISEMENT_SLIDER_IMAGE,
      SAVE_ADVERT_IMAGE: SAVE_ADVERT_IMAGE,
-     SLIDER_IMAGE: SLIDER_IMAGE
+     SLIDER_IMAGE: SLIDER_IMAGE,
+     ORDER_LIST: ORDER_LIST,
+     SOLD_PRODUCTS: SOLD_PRODUCTS,
+     ADD_PRODUCTS: ADD_PRODUCTS,
+     STOCK_ENTRY: STOCK_ENTRY
  };

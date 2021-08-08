@@ -17,13 +17,13 @@
     <h1>Please enter verification key.</h1>
     <div class="container">
         <div class="wrapper">
-            <form action="/verif-key/:"+<%= email%> method="post" name="Verification_Form" class="form-signin">
+            <form action="/verif-key" method="post" name="Verification_Form" class="form-signin">
                 <h3 class="form-signin-heading">Verification Key: </h3>
 
                 <input type="text" class="form-control" name="key" placeholder="0000" required="" autofocus="" />
                 
-
-                <button class="btn btn-lg btn-primary btn-block"  id="submitButton" name="Submit" value="submit" type="Submit">Submit</button>
+                
+                <button class="btn btn-lg btn-primary btn-block"  id="submitButton" name="Submit" value=<%= email %> type="Submit">Submit</button>
             </form>
         </div>
     </div>

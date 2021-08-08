@@ -5,9 +5,9 @@ const ParternsDetailSchema = new Schema({
     partnerName: {
         type: String
     },
-    // partnerName_last: {
-    //     type: String
-    // },
+    investment: {
+        type: Number
+    },
     latestInvestment:{
         type: String
     },

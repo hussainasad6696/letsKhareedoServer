@@ -5,6 +5,9 @@ const SoldProductsSchema = new Schema({
     pid: {
         type: String,
     },
+    name:{
+        type: String
+    },
     imagePath: {
         type: String,
     },
