@@ -49,7 +49,7 @@
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="Artical-form.html" style="padding: 10px 10px;">Artical Form</a>
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="OrderList" style="padding: 10px 10px;">Order List</a>
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="DataBaseEntryFormPage" style="padding: 10px 10px;">Stock Entry</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" style="padding: 10px 10px;">Logout</a>
+</li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="/logout" style="padding: 10px 10px;">Logout</a>
 </li></ul>
           </div>
           <div class="u-custom-menu u-nav-container-collapse">
@@ -62,7 +62,7 @@
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="Artical-form.html" style="padding: 10px 10px;">Artical Form</a>
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="OrderList" style="padding: 10px 10px;">Order List</a>
 </li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="DataBaseEntryFormPage" style="padding: 10px 10px;">Stock Entry</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link" style="padding: 10px 10px;">Logout</a>
+</li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="/logout" style="padding: 10px 10px;">Logout</a>
 </li></ul>
               </div>
             </div>
@@ -105,6 +105,11 @@
             </tbody>
           </table>
         </div>
+        <% var sum3 = 0; %>
+        <% for (var i = 0; i < partners.length; i++) { %>
+        <% sum3 = sum3 + partners[i].investment %>
+        <% } %>
+        <p class="u-text u-text-2">Total investment: <%sum3%></p>
       </div>
     </section>
     <section class="u-align-center u-clearfix u-section-2" id="sec-0445">
@@ -147,7 +152,11 @@
             </tbody>
           </table>
         </div>
-        <p class="u-text u-text-2">Total material price</p>
+        <% var sum = 0; %>
+        <% for (var i = 0; i < allproducts.length; i++) { %>
+        <% sum = sum + allproducts[i].price %>
+        <% } %>
+        <p class="u-text u-text-2">Total material price: <%sum%></p>
       </div>
     </section>
     <section class="u-align-center u-clearfix u-section-3" id="sec-8315">
@@ -191,7 +200,11 @@
             </tbody>
           </table>
         </div>
-        <p class="u-text u-text-2">Total sold amount</p>
+        <% var sum2 = 0; %>
+        <% for (var i = 0; i < soldproducts.length; i++) { %>
+        <% sum2 = sum2 + soldproducts[i].price %>
+        <% } %>
+        <p class="u-text u-text-2">Total sold amount: <%sum2%></p>
       </div>
     </section>
     

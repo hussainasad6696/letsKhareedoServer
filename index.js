@@ -1,10 +1,11 @@
 const https = require('https');
-const http = require('http');
+//const http = require('http');
 const fs = require('fs');
 const express = require('express');
 const mongoose = require('mongoose');
 const alert = require('alert');
 const multiparty = require('multiparty');
+const session = require('express-session');
 global.constants = require('./constants');
 const path = require("path");
 const multer = require('multer');
@@ -21,7 +22,7 @@ const ADD_IMAGES_DIR = DIR + '/advertisement';
 const { render } = require('ejs');
 
 
-const portHttp = process.env.PORT || 8000;
+//const portHttp = process.env.PORT || 8000;
 const portHttps = process.env.PORT || 8080;
 var app = express();
 
@@ -41,6 +42,16 @@ app.use(express.urlencoded({extended: true}));
 //app.use(express.bodyParser());
 app.use(express.static(__dirname + '/views'));
 app.set('view engine', 'ejs');
+app.use(session({secret:'app',cookie:{maxAge:6000}, resave: false,
+saveUninitialized: true}));
+
+var checkUser = function(req,res,next){
+    if(req.session.loggedIn){
+      next();
+    }else{
+      res.render('adminLogin',{title:"Login Here"});
+    }
+  };
 
 var transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -58,14 +69,14 @@ var transporter = nodemailer.createTransport({
     }, app);
     sslServer.listen(portHttps, () => console.log("HTTPS server started on port " + portHttps));
 
-    const httpServer = http.createServer(app);
-    httpServer.listen(portHttp, () => console.log("Http server started on port " + portHttp));
+    // const httpServer = http.createServer(app);
+    // httpServer.listen(portHttp, () => console.log("Http server started on port " + portHttp));
    
-    app.get('/', (req, res) =>{
-        var requestCheck;
-        if(req.secure){
-            requestCheck = "===========Request for https================";
-        }else requestCheck = "===========Request for http================";
+    app.get('/', checkUser, (req, res) =>{
+        var requestCheck= "===========Request for https================";
+        // if(req.secure){
+        //     requestCheck = "===========Request for https================";
+        // }else requestCheck = "===========Request for http================";
         console.log(requestCheck);
         res.send(requestCheck);
     });
@@ -338,8 +349,14 @@ app.get('/index', (req, res) => {
      })
  });
 
-app.get(constants.ADMIN_LOGIN, (req,res)=>{
+app.get(constants.ADMIN_LOGIN, checkUser, (req,res)=>{
     res.render('adminLogin');
+})
+
+app.get(constants.LOGOUT, (req, res)=>{
+    req.session.loggedIn=false;
+    res.redirect(constants.ADMIN_LOGIN);
+    console.log('User logged out.')
 })
 
 app.get(constants.VERIFICATION, (req, res)=>{   // testing done
@@ -465,6 +482,7 @@ app.post(constants.VERIF_KEY, (req, res)=>{    // testing done
                 SoldProducts.find({}).then((sprods)=>{
                     Products.find({}).then((products)=>{
                         res.render('index', {person: partner.partnerName, partners: partners, soldproducts: sprods, allproducts: products});
+                        //res.redirect('/index', {person: partner.partnerName, partners: partners, soldproducts: sprods, allproducts: products});
                     })
                 })
             });

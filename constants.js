@@ -29,6 +29,7 @@
  const SOLD_PRODUCTS = '/soldProducts';
  const ADD_PRODUCTS = '/addProduct';
  const STOCK_ENTRY = '/DataBaseEntryFormPage';
+ const LOGOUT = '/logout';
 
  module.exports = {
      SALES_SHEET: SALES_SHEET,
@@ -61,5 +62,6 @@
      ORDER_LIST: ORDER_LIST,
      SOLD_PRODUCTS: SOLD_PRODUCTS,
      ADD_PRODUCTS: ADD_PRODUCTS,
-     STOCK_ENTRY: STOCK_ENTRY
+     STOCK_ENTRY: STOCK_ENTRY,
+     LOGOUT: LOGOUT,
  };
