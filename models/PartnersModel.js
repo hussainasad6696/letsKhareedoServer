@@ -31,6 +31,9 @@ const ParternsDetailSchema = new Schema({
     },
     password: {
         type: String,
+    },
+    status: {
+        tyoe: String,
     }
 });
 

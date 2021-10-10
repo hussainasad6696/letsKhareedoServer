@@ -105,9 +105,9 @@
             </tbody>
           </table>
         </div>
-        <% var sum3 = 0; %>
+        <% var sum3 = 0 %>
         <% for (var i = 0; i < partners.length; i++) { %>
-        <% sum3 = sum3 + partners[i].investment %>
+        <%= sum3 = sum3 + partners[i].investment %>
         <% } %>
         <p class="u-text u-text-2">Total investment: <%sum3%></p>
       </div>
@@ -154,8 +154,8 @@
         </div>
         <% var sum = 0; %>
         <% for (var i = 0; i < allproducts.length; i++) { %>
-        <% sum = sum + allproducts[i].price %>
-        <% } %>
+        <%= sum = sum + allproducts[i].price %>
+        <%= } %>
         <p class="u-text u-text-2">Total material price: <%sum%></p>
       </div>
     </section>
@@ -202,8 +202,8 @@
         </div>
         <% var sum2 = 0; %>
         <% for (var i = 0; i < soldproducts.length; i++) { %>
-        <% sum2 = sum2 + soldproducts[i].price %>
-        <% } %>
+        <%= sum2 = sum2 + soldproducts[i].price %>
+        <%= } %>
         <p class="u-text u-text-2">Total sold amount: <%sum2%></p>
       </div>
     </section>

@@ -57,11 +57,9 @@ var transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
       user: 'zeeniaather96@gmail.com',
-      pass: 'B4biryani'
+      pass: 'hussain4lyf'
     }
 });
-
-
 
     const sslServer = https.createServer({
         key: fs.readFileSync('./sslCert/key.pem'),
@@ -74,47 +72,14 @@ var transporter = nodemailer.createTransport({
    
     app.get('/', checkUser, (req, res) =>{
         var requestCheck= "===========Request for https================";
-        // if(req.secure){
-        //     requestCheck = "===========Request for https================";
-        // }else requestCheck = "===========Request for http================";
         console.log(requestCheck);
         res.send(requestCheck);
     });
-    
 
     app.get(constants.PARTNERS_FOR_DATAPAGE, (req, res) => {
         console.log(req);
         userName = req.query.userName;
         res.render('Partner_Update_Form', {userName: userName});
-        // PartnersDetail.findOne({partnerName_first: userName}, 
-        //     function(err,partners) {
-        //         console.log("getMethod of partnersForDataPage: "+ partners);
-        //         // partners.forEach(function(partner) {
-        //             console.log(partners);
-        //             if(userName !== null || userName !== "" && 
-        //             userName === partners.partnerName_first || userName === partners.partnerName_last){
-        //                 firstName = partners.partnerName_first;
-        //                 lastName = partners.partnerName_last;
-        //                 id = partners._id;
-        //             }
-        //         // });  
-        //     })
-        // .then((partners, err) => {
-        //     if(err) {
-        //         console.log(err);
-        //     return;
-        // }
-        //     if(partners.length > 0) {
-        //         console.log(partners);
-
-        //     }else {
-        //     console.log("db is empty so inserting new data");
-        //     }
-        //     res.render('Partner_Update_Form', {partnerName: userName, fName: firstName, lName: lastName});
-
-        // }).catch(function(err) {
-        //     console.log(err+"error when loading")
-        // });
     });
 
     app.post(constants.PARTNERS_FOR_DATAPAGE, (req, res) =>{
@@ -175,8 +140,6 @@ var transporter = nodemailer.createTransport({
             res.render('index', {person: "Mian Hussain", partner: partners});
         });
     });
-
-    
 
     app.get(constants.DATABASE_ENTRY_FORM, (req, res) => {
         res.render('DataBaseEntryFormPage');
@@ -310,21 +273,11 @@ var transporter = nodemailer.createTransport({
         })
     })
 
-// app.post('/login/userData', (req, res) => {
-//     var userData = UserData(req.body);
-//     userData.save().then(() =>{
-//         res.send(req.body);
-//     }).catch(err =>{
-//         console.log(err+" error on add userData");
-//     });
-// });
-
-
 
 // zeenia's code
 
 app.get('/index', (req, res) => {
-    //res.render('index', {person: 'test', partners: ['a', 'b']});
+    if(req.session.loggedIn)
     PartnersDetail.findOne({email: req.body.Submit})
     .then((partner)=>{
         console.log(partner.verifKey);
@@ -354,6 +307,7 @@ app.get(constants.ADMIN_LOGIN, checkUser, (req,res)=>{
 })
 
 app.get(constants.LOGOUT, (req, res)=>{
+
     req.session.loggedIn=false;
     res.redirect(constants.ADMIN_LOGIN);
     console.log('User logged out.')
@@ -464,7 +418,9 @@ app.post(constants.ADD_PARTNER, (req, res)=>{       //testing done
         else{
             PartnersDetail.create(req.body).then((partner)=>{
                 console.log('Partner added to database: '+partner);
-                res.status(200).send('Parner added to database.');
+                PartnersDetail.findByIdAndUpdate({_id: partner._id},
+                    {status: 'nil'});
+                res.status(200).send('Partner added to database.');
             })
         }
     })
@@ -474,22 +430,40 @@ app.post(constants.VERIF_KEY, (req, res)=>{    // testing done
     console.log(req.body);
     PartnersDetail.findOne({email: req.body.Submit})
     .then((partner)=>{
-        console.log(partner.verifKey);
-        console.log(req.body.key);
-        if(partner.verifKey === req.body.key){
-            PartnersDetail.find({}, function (err,partners) {
-                console.log(partners+": data is here");
+        if(partner.status == 'active')
+        {
+            PartnersDetail.find({}).then((partners)=>{
                 SoldProducts.find({}).then((sprods)=>{
                     Products.find({}).then((products)=>{
                         res.render('index', {person: partner.partnerName, partners: partners, soldproducts: sprods, allproducts: products});
-                        //res.redirect('/index', {person: partner.partnerName, partners: partners, soldproducts: sprods, allproducts: products});
                     })
                 })
-            });
+            })
         }
-        else{
-            alert('Wrong key entered. Try again.');
-            res.render('verif-key');
+        else if (partner.status == 'nil'){
+            console.log(partner.verifKey);
+            console.log(req.body.key);
+            if(partner.verifKey === req.body.key){
+                req.session.loggedIn=true;
+                PartnersDetail.findByIdAndUpdate({_id: partner._id},
+                {status: 'active'}).then(()=>{
+                    console.log('Status active..');
+                })
+                console.log('here1');
+                PartnersDetail.find({}, function (err,partners) {
+                    console.log(partners+": data is here");
+                    SoldProducts.find({}).then((sprods)=>{
+                        Products.find({}).then((products)=>{
+                            res.render('index', {person: partner.partnerName, partners: partners, soldproducts: sprods, allproducts: products});
+                            //res.redirect('/index', {person: partner.partnerName, partners: partners, soldproducts: sprods, allproducts: products});
+                        })
+                    })
+                });
+            }
+            else{
+                alert('Wrong key entered. Try again.');
+                res.render('verif-key');
+            }
         }
     })
 });
